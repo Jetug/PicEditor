@@ -1,0 +1,206 @@
+﻿ <Window x:Class="PicEditor.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+        xmlns:dd="urn:gong-wpf-dragdrop"
+        xmlns:j="http://www.galasoft.ch/mvvmlight"
+        xmlns:ndd="clr-namespace:NDragDrop;assembly=NDragDrop"
+        xmlns:local="clr-namespace:PicEditor.View"
+        xmlns:b="clr-namespace:PicEditor.Behaviours"
+        xmlns:vm="clr-namespace:PicEditor.ViewModel"
+        xmlns:pic="clr-namespace:PicControls;assembly=PicControls"
+        mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen"
+        Style="{DynamicResource WindowStyle}"
+        Title="MainWindow"
+        Width="{Binding ImageWidth}"
+        Height="{Binding ImageHeight}"
+        MinWidth="720"
+        MinHeight="690"
+        Name="window">
+    <!--#region ds-->
+
+    <!--#endregion-->
+    <Window.DataContext>
+        <vm:MainWindowVM />
+    </Window.DataContext>
+    <!--<i:Interaction.Behaviors>
+        <b:MVVMBehaviour ActualHeight="{Binding ImageHeight, Mode=OneWayToSource}"
+                         ActualWidth="{Binding ImageWidth, Mode=OneWayToSource}" />
+    </i:Interaction.Behaviors>-->
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="MouseMove">
+            <j:EventToCommand Command="{Binding WindowMouseMove}"
+                              PassEventArgsToCommand="True" />
+        </i:EventTrigger>
+
+        <i:EventTrigger EventName="SizeChanged">
+            <j:EventToCommand Command="{Binding SizeChanged}"
+                              PassEventArgsToCommand="True" />
+        </i:EventTrigger>
+
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding WindowLoaded}" />
+        </i:EventTrigger>
+
+        <i:EventTrigger EventName="MouseLeftButtonUp">
+            <i:InvokeCommandAction Command="{Binding WindowLeftButtonUp}" />
+        </i:EventTrigger>
+
+        <i:EventTrigger EventName="KeyDown">
+            <j:EventToCommand Command="{Binding EscapeDown}"
+                              PassEventArgsToCommand="True" />
+        </i:EventTrigger>
+
+        <i:EventTrigger EventName="MouseDown">
+            <i:InvokeCommandAction Command="{Binding WindowMouseDown}" />
+        </i:EventTrigger>
+
+        <i:EventTrigger EventName="Closing">
+            <i:InvokeCommandAction Command="{Binding WindowClosing}" />
+        </i:EventTrigger>
+
+    </i:Interaction.Triggers>
+
+    <Grid Background="{DynamicResource BackgroundBrush}">
+        <Button Command="{Binding Ok}"
+                Content="Button"
+                HorizontalAlignment="Left"
+                Margin="25,55,0,0"
+                VerticalAlignment="Top"
+                Width="95"
+                Height="45"
+                Style="{DynamicResource ButtonStyle}"/>
+
+        <Button Command="{Binding NotOk}"
+                Style="{DynamicResource ButtonStyle}"
+                Content="Button"
+                HorizontalAlignment="Left"
+                Margin="25,125,0,0"
+                VerticalAlignment="Top"
+                Width="95"
+                Height="35" />
+
+        <!--<pic:Frame
+            Test="{Binding FramePage}"
+            HorizontalAlignment="Left"
+            Margin="165,14,0,0"
+            MinHeight="620" MinWidth="500"
+            VerticalAlignment="Top"/>-->
+
+        <Grid Margin="165,14,0,0"
+              MinHeight="620"
+              MinWidth="500"
+              HorizontalAlignment="Left"
+              VerticalAlignment="Top">
+            <Grid VerticalAlignment="Top"
+                  Height="20">
+                <Button Content="&lt;"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Margin="10,0,0,0"
+                        Width="20"
+                        Command="{Binding GoBack}"
+                        Style="{DynamicResource ButtonStyle}"/>
+                <Button Content="&gt;"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Margin="34,0,0,0"
+                        Width="20"
+                        Command="{Binding Goforward}"
+                        Style="{DynamicResource ButtonStyle}" />
+            </Grid>
+
+            <ContentPresenter Margin="0,20,0,0"
+                              Content="{Binding FramePage}" />
+        </Grid>
+
+        <Button Content="Открыть &#xD;&#xA;  папку"
+                Command="{Binding OpenFolder}"
+                HorizontalAlignment="Left"
+                Margin="25,290,0,0"
+                VerticalAlignment="Top"
+                Width="95"
+                Height="51"
+                HorizontalContentAlignment="Center"
+                VerticalContentAlignment="Center"
+                Style="{DynamicResource ButtonStyle}">
+        </Button>
+
+        <Button Command="{Binding Sort}"
+                Content="Sort"
+                HorizontalAlignment="Left"
+                Margin="25,14,0,0"
+                VerticalAlignment="Top"
+                Width="56"
+                Height="24"
+                Style="{DynamicResource ButtonStyle}" />
+
+        <Grid HorizontalAlignment="Left"
+              Height="299"
+              Margin="25,350,0,0"
+              VerticalAlignment="Top"
+              Width="115">
+            <TextBlock x:Name="tb"
+                       HorizontalAlignment="Left"
+                       Margin="10,0,0,0"
+                       TextWrapping="Wrap"
+                       Text=""
+                       VerticalAlignment="Top"
+                       Height="35"
+                       Width="65" />
+            <TextBlock HorizontalAlignment="Left"
+                       Margin="5,40,0,0"
+                       TextWrapping="Wrap"
+                       Text="{Binding ImageMouseX}"
+                       VerticalAlignment="Top"
+                       Height="29"
+                       Width="39" />
+            <TextBlock HorizontalAlignment="Left"
+                       Margin="49,40,0,0"
+                       TextWrapping="Wrap"
+                       Text="{Binding ImageMouseY}"
+                       VerticalAlignment="Top"
+                       Height="29"
+                       Width="41" />
+        </Grid>
+
+        <pic:PreviewControl ImageSource="{Binding DraggablePreview}"
+                            Visibility="{Binding DraggableVisibility}"
+                            ImageName="{Binding DraggableName}"
+                            Height="150"
+                            Width="150"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top"
+                            Margin="{Binding DraggableMargin}"
+                            IsHitTestVisible="False" />
+
+        <pic:PictureControl Name="pic"
+                            BackgroundOpacity="0.9"
+                            Visibility="{Binding PictureVisibility}"
+                            ImageSource="{Binding PictureSource}"
+                            BGMouseLeftButtonDown="{Binding ClosePicture}"
+                            ImageHeight="{Binding ImageHeight}"
+                            ImageWidth="{Binding ImageWidth}"
+                            KeyDown="pic_KeyDown">
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="KeyDown">
+                    <j:EventToCommand Command="{Binding ClosePictureWithKey}"
+                                      PassEventArgsToCommand="True" />
+                </i:EventTrigger>
+
+                <i:EventTrigger EventName="KeyDown">
+                    <j:EventToCommand Command="{Binding ClosePictureWithKey}"
+                                      PassEventArgsToCommand="True" />
+                </i:EventTrigger>
+                <i:EventTrigger EventName="MouseWheel">
+                    <j:EventToCommand Command="{Binding ResizePicture}"
+                                      PassEventArgsToCommand="True" />
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+        </pic:PictureControl>
+        
+    </Grid>
+</Window>

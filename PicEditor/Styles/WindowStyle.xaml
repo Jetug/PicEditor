@@ -1,0 +1,127 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    x:Class="PicEditor.Styles.WindowStyle">
+    <Style x:Key="WindowStyle"
+           TargetType="{x:Type Window}">
+        <Setter Property="WindowStyle"
+                Value="None" />
+        <Setter Property="AllowsTransparency"
+                Value="True" />
+        <Setter Property="WindowChrome.WindowChrome">
+            <Setter.Value>
+                <WindowChrome ResizeBorderThickness="5"
+                              CaptionHeight="30"
+                              CornerRadius="0"
+                              GlassFrameThickness="0" />
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Window}">
+                    <!-- Outer border with the dropshadow margin -->
+                    <Border Loaded="Border_Loaded">
+
+                        <!-- Main window outline -->
+                        <Grid>
+
+                            <!-- Opacity mask for corners on grid -->
+                            <Border x:Name="Container"
+                                    Background="{StaticResource WondowBorderBrush}" />
+
+                            <!-- The main window content -->
+                            <Grid>
+
+                                <!-- Corner clipping -->
+                                <Grid.OpacityMask>
+                                    <VisualBrush Visual="{Binding ElementName=Container}" />
+                                </Grid.OpacityMask>
+
+                                <Grid.RowDefinitions>
+
+                                    <!-- Title Bar -->
+                                    <RowDefinition Height="30" />
+                                    <!-- Window Content -->
+                                    <RowDefinition Height="*" />
+
+                                </Grid.RowDefinitions>
+
+                                <!-- Title Bar -->
+                                <Grid Grid.Column="0"
+                                      Panel.ZIndex="1"
+                                      Background="{DynamicResource WondowBorderBrush}">
+
+                                    <Grid.ColumnDefinitions>
+                                        <!-- Icon -->
+                                        <ColumnDefinition Width="Auto" />
+                                        <!-- Title -->
+                                        <ColumnDefinition Width="*" />
+                                        <!-- Window Buttons -->
+                                        <ColumnDefinition Width="Auto" />
+
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Icon -->
+                                    <Button Style="{DynamicResource SystemIconButton}"
+                                            Command="{Binding MenuCommand}">
+                                        <Image />
+                                    </Button>
+
+                                    <!-- Title -->
+                                    <TextBlock Grid.Column="1"
+                                               Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Title, FallbackValue=MainWindow}"
+                                               FontSize="16"
+                                               HorizontalAlignment="Left"
+                                               VerticalAlignment="Center"
+                                               Foreground="{DynamicResource ForegroundBrush}"/>
+
+                                    <!-- Window Buttons -->
+                                    <DockPanel Grid.Column="2">
+                                        <Button Click="MinimizeClick"
+                                                Style="{StaticResource WindowTitleButtonStyle}"
+                                                Foreground="White"
+                                                Width="35">
+                                            <Rectangle HorizontalAlignment="Center"
+                                                       VerticalAlignment="Bottom"
+                                                       IsHitTestVisible="False"
+                                                       Fill="White"
+                                                       Width="15"
+                                                       Height="3"
+                                                       Margin="0,9,0,0" />
+                                        </Button>
+                                        <Button Click="MaximizeRestoreClick"
+                                                Style="{StaticResource WindowTitleButtonStyle}"
+                                                Width="35">
+                                            <Path Data="M4,4H20V20H4V4M6,8V18H18V8H6Z"
+                                                  Fill="White"
+                                                  HorizontalAlignment="Center"
+                                                  VerticalAlignment="Center"
+                                                  Stretch="Uniform" />
+                                        </Button>
+                                        <Button Click="CloseClick"
+                                                Style="{StaticResource WindowCloseButtonStyle}"
+                                                Width="35">
+                                            <Path Data="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
+                                                  Fill="White"
+                                                  HorizontalAlignment="Center"
+                                                  VerticalAlignment="Center"
+                                                  Stretch="Uniform" />
+                                        </Button>
+                                    </DockPanel>
+                                </Grid>
+
+                                <!-- Page Content -->
+                                <Border Grid.Row="2"
+                                        BorderThickness="5,0,5,5"
+                                        BorderBrush="{DynamicResource WondowBorderBrush}">
+                                    <ContentPresenter Content="{TemplateBinding Content}" />
+                                </Border>
+
+                            </Grid>
+
+                        </Grid>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>
