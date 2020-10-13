@@ -251,15 +251,18 @@ namespace PicEditor.ViewModel
         {
             get => new DelegateCommand<MouseWheelEventArgs>((e) =>
             {
-                if(e.Delta > 0)
+                if(Keyboard.Modifiers == ModifierKeys.Control)
                 {
-                    ImageHeight += pictureResizeValue;
-                    ImageWidth += pictureResizeValue;
-                }
-                else if(ImageHeight - pictureResizeValue > pictureResizeValue && ImageWidth - pictureResizeValue > pictureResizeValue)
-                {
-                    ImageHeight -= pictureResizeValue;
-                    ImageWidth -= pictureResizeValue;
+                    if (e.Delta > 0)
+                    {
+                        ImageHeight += pictureResizeValue;
+                        ImageWidth += pictureResizeValue;
+                    }
+                    else if (ImageHeight - pictureResizeValue > pictureResizeValue && ImageWidth - pictureResizeValue > pictureResizeValue)
+                    {
+                        ImageHeight -= pictureResizeValue;
+                        ImageWidth -= pictureResizeValue;
+                    }
                 }
             });
         }

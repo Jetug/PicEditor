@@ -49,7 +49,7 @@ namespace PicEditor.Model
 
         #region Делегаты
         public Action<ImageItem, int> ShowPreview;
-        public Action<int> ShowEmptyPreviews;
+        public Action<List<string>> ShowEmptyPreviews;
         public Action<FolderItem> ShowFolder;
         #endregion
 
@@ -84,8 +84,6 @@ namespace PicEditor.Model
                 temp.RemoveAll((pic) => !IsImage(pic));
                 IOrderedEnumerable<string> pics = null;
 
-                //Application.Current.Dispatcher.Invoke(() => ShowEmptyPreviews(temp.Count));
-
                 switch (sorting)
                 {
                     case Sorting.Name:
@@ -98,21 +96,20 @@ namespace PicEditor.Model
                         pics = temp.OrderBy(p => File.GetLastWriteTime(p));
                         break;
                 }
-                //Application.Current.Dispatcher.Invoke(() => MessageBox.Show(pics.GetType().ToString()));
-                //pics = tempPics.ToList();
-                //pics.RemoveAll((p) => !IsImage(p));
-                //Application.Current.Dispatcher.Invoke(() => GiveCount(pics.Count()));
-                for (int i = 0; i < pics.Count(); i++)
+
+                var pics2 = temp;
+                Application.Current.Dispatcher.Invoke(() => ShowEmptyPreviews(pics2));
+
+                for (int i = 0; i < pics2.Count(); i++)
                 {
-                    if (IsImage(pics.ElementAt(i)))
+                    if (IsImage(pics2.ElementAt(i)))
                     {
-                        string path = pics.ElementAt(i);
+                        string path = pics2.ElementAt(i);
                         BitmapImage icon = GetPreview(path, ImagePreviewSize);
                         Application.Current.Dispatcher.Invoke(() =>
                         {
                             ShowPreview(new ImageItem(icon, path), i);
                         });
-                        Thread.Sleep(1);
                     }
                 }
                 Application.Current.Dispatcher.Invoke(() => end?.Invoke());

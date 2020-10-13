@@ -67,7 +67,7 @@
                      HorizontalAlignment="Right"
                      VerticalAlignment="Top"
                      Height="24"
-                     Width="142"
+                     Width="78"
                      Margin="0,14,177,0"
                      TextWrapping="NoWrap" />
 
@@ -78,7 +78,7 @@
                     Margin="0,11,85,0"
                     Width="75"
                     Height="29"
-                    Style="{DynamicResource ButtonStyle}"/>
+                    Style="{DynamicResource ButtonStyle}" />
 
             <Menu  Name="menu"
                    Background="{DynamicResource MainColorBrush}"
@@ -117,8 +117,14 @@
                               Background="{DynamicResource MainColorBrush}"
                               Template="{DynamicResource ArrowMenuItemControlTemplate}">
                         <MenuItem Header="По имени" />
+
+                        <MenuItem />
                         <MenuItem Header="По дате созданя" />
+                        
+                        <MenuItem />
                         <MenuItem Header="По дате изменения" />
+                        
+                        <MenuItem />
                     </MenuItem>
                 </MenuItem>
             </Menu>
@@ -140,6 +146,14 @@
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </CheckBox>
+            <Button Content="Button"
+                    Style="{DynamicResource ButtonStyle}"
+                    Command="{Binding Test}"
+                    HorizontalAlignment="Left"
+                    Margin="165,11,0,0"
+                    VerticalAlignment="Top"
+                    Width="75"
+                    Height="27" />
         </Grid>
 
         <ScrollViewer x:Name="scrollView"
@@ -193,7 +207,6 @@
                                             IsSelected="{Binding IsSelected}"
                                             OnSelected="{Binding ImageSelected}"
                                             OnUnselected="{Binding ImageUnselected}"
-                                            
                                             BorderThickness="10">
                             <i:Interaction.Behaviors>
                                 <b:MVVMBehaviour MousePos="{Binding ImageMousePos, Mode=OneWayToSource}" />

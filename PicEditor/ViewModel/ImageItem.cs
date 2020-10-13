@@ -29,7 +29,8 @@ namespace PicEditor.ViewModel
                 path = value;
                 Name = Path.GetFileNameWithoutExtension(value);
                 Extension = Path.GetExtension(value);
-                
+                CreationDate = File.GetCreationTime(value);
+                ModificationDate = File.GetLastWriteTime(value);
             }
         }
         public string Name { get; private set; }

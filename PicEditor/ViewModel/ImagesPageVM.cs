@@ -16,6 +16,7 @@ using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using NaturalSort.Extension;
+using DevExpress.Mvvm.POCO;
 
 namespace PicEditor.ViewModel
 {
@@ -107,13 +108,10 @@ namespace PicEditor.ViewModel
         {
             get => new DelegateCommand(() =>
             {
-                //ImageItems.Clear();
-
                 //for (int i = 0; i < 100; i++)
                 //{
                 //    ImageItems.Add(new ImageItem(""));
                 //}
-
                 //model.GetPictures(@"C:\Users\kserg\OneDrive\Рабочий стол\imgs\TestThink", SortingType.Name);//, () => SortBy(Sorting.Name));
             });
         }
@@ -232,6 +230,14 @@ namespace PicEditor.ViewModel
                 }
             });
         }
+
+        //public ICommand Test
+        //{
+        //    get => new DelegateCommand(() =>
+        //    {
+        //        ImageItems.Move(0, 5);
+        //    });
+        //}
         #endregion
 
         #region Приватные методы
@@ -250,26 +256,42 @@ namespace PicEditor.ViewModel
                     temp = ImageItems.OrderBy(p => p.ModificationDate);
                     break;
             }
+
+            //List<ImageItem> temp = ImageItems.ToList();
+            //switch (sorting)
+            //{
+            //    case Sorting.Name:
+            //        temp.Sort((x, y) => x.Name.CompareTo(y.Name));
+            //        break;
+            //    case Sorting.CreationDate:
+            //        temp.Sort((x, y) => x.CreationDate.CompareTo(y.CreationDate));
+            //        break;
+            //    case Sorting.ModificationDate:
+            //        temp.Sort((x, y) => x.ModificationDate.CompareTo(y.ModificationDate));
+            //        break;
+            //}
+
             for (int i = 0; i < temp.Count(); i++)
             {
-                ImageItems.Move(ImageItems.IndexOf(temp.ElementAt(i)), i);
+                int j = ImageItems.IndexOf(temp.ElementAt(i));
+                if(j != i)
+                    ImageItems.Move(j, i);
             }
         }
 
         private void ShowPreview(ImageItem img, int i)
         {
-            ImageItems.Add(img);
+            //ImageItems.Add(img);
 
-            //ImageItems[i].Fill(img);
-            //RaisePropertyChanged("ImageItems");
+            ImageItems[i].Fill(img);
+            RaisePropertyChanged("ImageItems");
         }
 
-        private void ShowEmptyPreviews(int count)
+        private void ShowEmptyPreviews(List<string> paths)
         {
-            for (int i = 0; i < count; i++)
+            foreach (var p in paths)
             {
-                BitmapImage bmi = new BitmapImage();
-                ImageItems.Add(new ImageItem(bmi));
+                ImageItems.Add(new ImageItem(p));
             }
         }
         #endregion
