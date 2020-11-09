@@ -24,11 +24,9 @@ C:\Users\Jetug\YandexDisk\Projects\C#\PicEditor\PicControls\bin\Debug\WpfAnimate
 C:\Users\Jetug\YandexDisk\Projects\C#\PicEditor\PicControls\bin\Debug\WpfAnimatedGif.xml
 C:\Users\Jetug\YandexDisk\Projects\C#\PicEditor\PicControls\obj\Debug\PicControls.csprojAssemblyReference.cache
 C:\Users\Jetug\YandexDisk\Projects\C#\PicEditor\PicControls\obj\Debug\PictureControl.g.cs
-C:\Users\Jetug\YandexDisk\Projects\C#\PicEditor\PicControls\obj\Debug\PreviewControl.g.cs
 C:\Users\Jetug\YandexDisk\Projects\C#\PicEditor\PicControls\obj\Debug\PicControls_MarkupCompile.cache
 C:\Users\Jetug\YandexDisk\Projects\C#\PicEditor\PicControls\obj\Debug\PicControls_MarkupCompile.lref
 C:\Users\Jetug\YandexDisk\Projects\C#\PicEditor\PicControls\obj\Debug\PictureControl.baml
-C:\Users\Jetug\YandexDisk\Projects\C#\PicEditor\PicControls\obj\Debug\PreviewControl.baml
 C:\Users\Jetug\YandexDisk\Projects\C#\PicEditor\PicControls\obj\Debug\PicControls.g.resources
 C:\Users\Jetug\YandexDisk\Projects\C#\PicEditor\PicControls\obj\Debug\PicControls.Properties.Resources.resources
 C:\Users\Jetug\YandexDisk\Projects\C#\PicEditor\PicControls\obj\Debug\PicControls.csproj.GenerateResource.cache
@@ -57,3 +55,7 @@ C:\Users\kserg\YandexDisk\Projects\C#\PicEditor\PicControls\obj\Debug\PicControl
 C:\Users\kserg\YandexDisk\Projects\C#\PicEditor\PicControls\obj\Debug\PicControls.pdb
 C:\Users\Jetug\YandexDisk\Projects\C#\PicEditor\PicControls\obj\Debug\Frame.g.cs
 C:\Users\Jetug\YandexDisk\Projects\C#\PicEditor\PicControls\obj\Debug\Frame.baml
+C:\Users\kserg\YandexDisk\Projects\C#\PicEditor\PicControls\obj\Debug\Frame.g.cs
+C:\Users\kserg\YandexDisk\Projects\C#\PicEditor\PicControls\obj\Debug\Frame.baml
+C:\Users\Jetug\YandexDisk\Projects\C#\PicEditor\PicControls\obj\Debug\ThumbnailControl.g.cs
+C:\Users\Jetug\YandexDisk\Projects\C#\PicEditor\PicControls\obj\Debug\ThumbnailControl.baml

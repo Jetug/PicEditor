@@ -529,7 +529,7 @@
 
     <!--#region PreviewControlStyle-->
     <Style x:Key="PreviewControlStyle"
-           TargetType="{x:Type pic:PreviewControl}">
+           TargetType="{x:Type pic:ThumbnailControl}">
         <Setter Property="BorderThickness"
                 Value="10" />
     </Style>

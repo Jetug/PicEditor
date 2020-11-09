@@ -1,25 +1,31 @@
-﻿  <UserControl x:Class="PicControls.PictureControl"
+﻿<UserControl x:Class="PicControls.PictureControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:PicControls"
              xmlns:gif="http://wpfanimatedgif.codeplex.com"
              mc:Ignorable="d"
              Name="pictureControl"
              Height="Auto" Width="Auto"
-             MinHeight="500" MinWidth="500" 
+             MinHeight="500" MinWidth="500"
              MouseDown="pictureControl_MouseDown"
-             MouseWheel="pictureControl_MouseWheel">
+             MouseWheel="pictureControl_MouseWheel"
+             
+             Loaded="pictureControl_Loaded"
+             Initialized="pictureControl_Initialized">
     <Grid>
         <Rectangle Fill="#FF252525"
                    Opacity="{Binding BackgroundOpacity, ElementName=pictureControl}"
                    MouseLeftButtonUp="Grid_MouseLeftButtonUp" />
-        <Image gif:ImageBehavior.AnimatedSource="{Binding ImageSource, ElementName=pictureControl}"
+        <Image Name="image"
+               gif:ImageBehavior.AnimatedSource="{Binding ImageSource, ElementName=pictureControl}"
                HorizontalAlignment="Center"
                VerticalAlignment="Center"
                Height="{Binding ImageHeight, ElementName=pictureControl}"
                Width="{Binding ImageWidth, ElementName=pictureControl}"
-               Margin="0,0,0,0" />
+               Margin="0,0,0,0"
+               MouseLeftButtonDown="image_MouseLeftButtonDown"
+               MouseMove="pictureControl_MouseMove" />
     </Grid>
 </UserControl>

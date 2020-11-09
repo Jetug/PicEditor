@@ -19,17 +19,19 @@ namespace PicEditor.Model
 
         public FileSearcher()
         {
-            if (File.Exists(whiteListPath))
-            {
-                using (StreamReader sr = new StreamReader(whiteListPath))
-                {
-                    string line;
-                    while ((line = sr.ReadLine()) != null)
-                    {
-                        whiteList.Add(line);
-                    }
-                }
-            }
+            //if (File.Exists(whiteListPath))
+            //{
+            //    using (StreamReader sr = new StreamReader(whiteListPath))
+            //    {
+            //        string line;
+            //        while ((line = sr.ReadLine()) != null)
+            //        {
+            //            whiteList.Add(line);
+            //        }
+            //    }
+            //}
         }
+
+        
     }
 }

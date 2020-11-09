@@ -29,11 +29,15 @@ namespace PicEditor
         #endregion
 
         #region Делегаты
+        public delegate Point PointHandler();
+
         public Action<BitmapImage> ShowPreview { get; set; }
         public Action HidePreview { get; set; }
         public Action<BitmapImage> OpenPicture;
         public Action<string> OpenPictureTR;
-        public Action<UserControl> Navigate;
+        public Action MouseLeftButtonUp;
+        public Predicate<Page> Navigate;
+        public PointHandler GetMousePosition;
         //public Action ShowNextPicture;
         //public Action ShowPerviousPicture;
         #endregion
@@ -82,14 +86,14 @@ namespace PicEditor
         public Dictionary<string, ImagesPageVM> FrameHistory = new Dictionary<string, ImagesPageVM>();
         public Dictionary<int, Parameters> ConstructorParameters = new Dictionary<int, Parameters>();
 
-        public UserControl HomePage { get; set; }
-        public UserControl CurrentPage { get; set; }
+        public Page HomePage { get; set; }
+        public Page CurrentPage { get; set; }
 
         public object ClickedElement { get; set; }
         #endregion
 
         #region Публичные методы
-        public void ShowPage<T>(Parameters parameters) where T : UserControl, new()
+        public void ShowPage<T>(Parameters parameters) where T : Page, new()
         {
             ConstructorParameters.Add(maxID+1, parameters);
             T page = new T();
@@ -109,16 +113,15 @@ namespace PicEditor
         #endregion
     }
 
-    abstract class Parameters
-    {
-        
-    }
+    abstract class Parameters { }
 
-    class ImagePageVMParameters: Parameters
+    class VoidParameters: Parameters { }
+
+    class DirectoryParameters: Parameters
     {
         public string Directory;
 
-        public ImagePageVMParameters(string directory)
+        public DirectoryParameters(string directory)
         {
             Directory = directory;
         }

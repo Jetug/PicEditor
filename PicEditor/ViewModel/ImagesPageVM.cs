@@ -1,22 +1,22 @@
 ﻿using DevExpress.Mvvm;
 using DevExpress.Mvvm.Native;
-using DevExpress.Mvvm.UI;
 using PicEditor.Model;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
-using System.Windows.Threading;
 using NaturalSort.Extension;
-using DevExpress.Mvvm.POCO;
+using System.Windows.Media;
+using System.Windows.Controls;
+using System.Windows.Shapes;
+using System.Drawing;
+using Rectangle = System.Drawing.Rectangle;
+using Point = System.Windows.Point;
+using Size = System.Drawing.Size;
 
 namespace PicEditor.ViewModel
 {
@@ -30,50 +30,47 @@ namespace PicEditor.ViewModel
         public string NewName { get; set; }
         public int SortParamIndex { get; set; } = -1;
         public BitmapImage PictureSource { get; set; }
-        public string directory;
-        public string Directory
-        { 
-            get => directory;
-            set
-            {
-                try
-                {
-                    global.ImageItemCollections.Add(value, ImageItems);
-                }
-                catch (ArgumentException)
-                {
-                    ImageItems = global.ImageItemCollections[value];
-                }
-                //global.ImageItemCollections.Add(value, ImageItems);
-                directory = value;
-            }
-        }
+        public string Directory { get; set; }
         public double PreviewWidth { get; set; } = defaultSize;
         public double PreviewHeight { get; set; } = defaultSize;
-        public double ScrollViewHeight { get; set; }
+        public double ScrollViewerHeight { get; set; }
+        public double ScrollViewerWidth { get; set; }
+        public double ScrollViewerVerticalOffset { get; set; }
+        public double ScrollViewerViewportHeight { get; set; }
         public Point ScrollViewMousePos { get; set; }
         public BitmapImage DraggablePreview { get; set; }
         public Thickness DraggableMargin { get; set; } = new Thickness(10, 415, 0, 0);
         public Visibility DraggableVisibility { get; set; } = Visibility.Hidden;
         public bool IsChecked { get; set; } = false;
 
-        public ObservableCollection<ImageItem> ImageItems { get; set; } = new ObservableCollection<ImageItem>();
+        public Thickness RubberBandMargin { get; set; }
+        public double RubberBandHeight { get; set; } = 0;
+        public double RubberBandWidth { get; set; } = 0;
+        public TranslateTransform RubberBandRenderTransform { get; set; }
+
+        public ObservableCollection<ImageItem> ImageItems { get; set; } = new ObservableCollection<ImageItem> { };
         #endregion
 
         #region Delegates
-        public delegate Point PointHandler();
-        public delegate double SizeHandler();
         public Action<double> LineUp;
         public Action<double> LineDown;
         public PointHandler GetMausePosOnScrollView;
-        public PointHandler GetMausePosOnWindow;
+        public PointHandler GetMausePosOnPage;
         public SizeHandler GetScrollViewHeigh;
+        public Action PageCaptureMouse;
+        public Action PageReleaseMouseCapture;
+        public SizeHandler GetVerticalOffset;
+        public SizeHandler GetViewportHeight;
+        public PointHandler<int> GetItemPosition;
         #endregion
 
         #region Поля
         private int id;
-        private MainModel model = new MainModel();
+        private MediaSearcher model = new MediaSearcher();
         private NavigationService global = NavigationService.GetInstance();
+        private Point startDragPoint;
+        private bool needRuberBand;
+        public Page page;
         #endregion
 
         #region Конструкторы
@@ -81,25 +78,29 @@ namespace PicEditor.ViewModel
         {
             id = global.GetID();
 
-            
-
             global.SelectedImageItems.Clear();
-            //global.ShowPreview = (prev) =>
-            //{
-            //    DraggablePreview = prev;
-            //    DraggableVisibility = Visibility.Visible;
-            //};
 
-            //global.HidePreview = () => DraggableVisibility = Visibility.Hidden;
-
-
-            ImagePageVMParameters parameters = (ImagePageVMParameters)global.GetParameters(id);
+            DirectoryParameters parameters = (DirectoryParameters)global.GetParameters(id);
             Directory = parameters.Directory;
 
-            model.ShowPreview += ShowPreview;
-            model.ShowEmptyPreviews += ShowEmptyPreviews;
+            if (!global.ImageItemCollections.ContainsKey(Directory))
+            {
+                global.ImageItemCollections.Clear();
+                global.ImageItemCollections.Add(Directory, ImageItems);
 
-            model.GetPictures(Directory, Sorting.Name);
+                model.ShowEmptyPreviews += ShowEmptyPreviews;
+                model.GetPictures(Directory, Sorting.Name);
+            }
+            else ImageItems = global.ImageItemCollections[Directory];
+
+            //global.MouseLeftButtonUp += HideRubberBand;
+
+            // MouseHook.OnMouseUp += MouseHook_OnMouseUp;
+        }
+
+        private void MouseHook_OnMouseUp(object sender, Point p)
+        {
+            HideRubberBand();
         }
         #endregion
 
@@ -139,7 +140,7 @@ namespace PicEditor.ViewModel
             get => new DelegateCommand(() =>
             {
                 var date = new DateTime(2018, 1, 1, 1, 0, 0);
-                var span = new TimeSpan(0,5,0);
+                var span = new TimeSpan(0, 5, 0);
                 model.EditDate(ImageItems.ToList(), date, span, DateType.CreationAndModification);
                 for (int i = 0; i < ImageItems.Count; i++)
                 {
@@ -178,16 +179,162 @@ namespace PicEditor.ViewModel
             });
         }
 
+        public ICommand PageLeftButtonDown
+        {
+            get => new DelegateCommand(() =>
+            {
+                needRuberBand = true;
+                startDragPoint = GetMausePosOnPage();
+                PageCaptureMouse();
+            });
+        }
+
+        public ICommand PageMouseUp
+        {
+            get => new DelegateCommand(() =>
+            {
+                HideRubberBand();
+                needRuberBand = false;
+                PageReleaseMouseCapture();
+            });
+        }
+
         public ICommand WinMouseMove
         {
             get => new DelegateCommand<MouseEventArgs>((e) =>
             {
-                if (Mouse.LeftButton == MouseButtonState.Pressed && global.DraggableImage != null)
+                if (Mouse.LeftButton == MouseButtonState.Pressed && needRuberBand)
                 {
-                    Point pos = GetMausePosOnWindow();
-                    DraggableMargin = new Thickness(pos.X - global.ImageMouseX, pos.Y - global.ImageMouseY, 0, 0);
+                    Point currentPos = GetMausePosOnPage();
+                    if (global.DraggableImage != null)
+                    {
+                        DraggableMargin = new Thickness(currentPos.X - global.ImageMouseX, currentPos.Y - global.ImageMouseY, 0, 0);
+                    }
+                    else
+                    {
+                        double Right = startDragPoint.X < currentPos.X ? startDragPoint.X : currentPos.X;
+                        double Bottom = startDragPoint.Y < currentPos.Y ? startDragPoint.Y : currentPos.Y;
+
+                        RubberBandRenderTransform = new TranslateTransform(Right, Bottom);
+                        double width = Math.Abs(currentPos.X - startDragPoint.X);
+                        double height = Math.Abs(currentPos.Y - startDragPoint.Y);
+                        RubberBandWidth = width;
+                        RubberBandHeight = height;
+
+                        var viewportHeight = GetViewportHeight();
+                        var verticalOffset = GetVerticalOffset();
+
+                        double x2 = Right + width;
+                        double y2 = Bottom + height;
+
+                        Point startPoint = new Point(Right, Bottom);
+                        Point endPoint = new Point(x2, y2);
+
+                        foreach (var item in ImageItems)
+                        {
+                            Point topLeft = item.GetPositionOn(page);
+                            Point bottomRight = new Point(topLeft.X + PreviewWidth, topLeft.Y + PreviewHeight);
+
+                            Rectangle rectangle1 = new Rectangle((int)topLeft.X, (int)topLeft.Y, (int)PreviewWidth, (int)PreviewHeight);
+                            Rectangle rectangle2 = new Rectangle((int)startPoint.X, (int)startPoint.Y, (int)width, (int)height);
+                            int res = IndexOfInnerRectangle(rectangle1, rectangle2);
+
+                            if (Intersects(rectangle1, rectangle2))//if (IsCrossing(topLeft, bottomRight, startPoint, endPoint))
+                            {
+                                item.IsSelected = true;
+                            }
+                            else item.IsSelected = false;
+                        }
+                    }
                 }
             });
+        }
+
+        bool Intersects (Rectangle r1, Rectangle r2)
+        {
+            return
+            (
+                (
+                    ((r1.Left>=r2.Left && r1.Left<=r2.Right )||(r1.Right>=r2.Left && r1.Right<=r2.Right )) 
+                    && 
+                    ((r1.Top>=r2.Top && r1.Top<=r2.Bottom )||(r1.Bottom>=r2.Top && r1.Bottom<=r2.Bottom ))
+                ) 
+                ||
+                (
+                    ((r2.Left>=r1.Left && r2.Left<=r1.Right) || (r2.Right>=r1.Left && r2.Right<=r1.Right )) 
+                    && 
+                    ((r2.Top>=r1.Top && r2.Top<=r1.Bottom) || (r2.Bottom>=r1.Top && r2.Bottom<=r1.Bottom ))
+                )
+            ) 
+            ||
+            (
+                (
+                    ((r1.Left>=r2.Left && r1.Left<=r2.Right )||(r1.Right>=r2.Left && r1.Right<=r2.Right )) 
+                    && 
+                    ((r2.Top>=r1.Top && r2.Top<=r1.Bottom )||(r2.Bottom>=r1.Top && r2.Bottom<=r1.Bottom ))
+                ) 
+                ||
+                (
+                    ((r2.Left>=r1.Left && r2.Left<=r1.Right )||(r2.Right>=r1.Left && r2.Right<=r1.Right )) 
+                    && 
+                    ((r1.Top>=r2.Top && r1.Top<=r2.Bottom )||(r1.Bottom>=r2.Top && r1.Bottom<=r2.Bottom ))
+                )
+            );
+        }
+
+        //bool Intersects(Rectangle r1, Rectangle r2)
+        //{
+        //    if (r1.Left > r2.Right || r1.Right < r2.Left || r1.Top < r2.Bottom || r1.Bottom > r2.Top) return false;
+        //    return true;
+        //}
+
+        public static int IndexOfInnerRectangle(Rectangle r1, Rectangle r2)
+        {
+            if (CompareRectangle(r1, r2)) return 0;
+            if (CompareRectangle(r2, r1)) return 1;
+            return -1;
+        }
+
+        public static bool CompareRectangle(Rectangle r1, Rectangle r2)
+        {
+            return r1.Left >= r2.Left
+                 && r1.Right <= r2.Right
+                 && r1.Top >= r2.Top
+                 && r1.Bottom <= r2.Bottom;
+        }
+
+        private bool IsCrossing(Point startPoint1, Point endPoint1, Point startPoint2, Point endPoint2)
+        {
+            return _IsCrossing(startPoint1, endPoint1, startPoint2, endPoint2) || _IsCrossing(startPoint2, endPoint2, startPoint1, endPoint1);
+        }
+
+        private bool _IsCrossing(Point _startPoint1, Point _endPoint1, Point _startPoint2, Point _endPoint2)
+        {
+            Point[] points = new Point[]
+            {
+                _startPoint1,
+                new Point(_endPoint1.X, _startPoint1.Y),
+                new Point(_startPoint1.X, _endPoint1.Y),
+                _endPoint1,
+            };
+
+            bool flag = false;
+            foreach (var point in points)
+            {
+                if (IsPointInRange(_startPoint2, _endPoint2, point))
+                {
+                    flag = true;
+                    break;
+                }
+            }
+            return flag;
+        }
+
+        private bool IsPointInRange(Point start, Point end, Point point)
+        {
+            if ((start.X <= point.X && start.Y <= point.Y) && (point.X <= end.X && point.Y <= end.Y))
+                return true;
+            return false;
         }
 
         public ICommand SelectAll
@@ -261,29 +408,30 @@ namespace PicEditor.ViewModel
             //switch (sorting)
             //{
             //    case Sorting.Name:
-            //        temp.Sort((x, y) => x.Name.CompareTo(y.Name));
+            //        temp.Sort((Left, Top) => Left.Name.CompareTo(Top.Name));
             //        break;
             //    case Sorting.CreationDate:
-            //        temp.Sort((x, y) => x.CreationDate.CompareTo(y.CreationDate));
+            //        temp.Sort((Left, Top) => Left.CreationDate.CompareTo(Top.CreationDate));
             //        break;
             //    case Sorting.ModificationDate:
-            //        temp.Sort((x, y) => x.ModificationDate.CompareTo(y.ModificationDate));
+            //        temp.Sort((Left, Top) => Left.ModificationDate.CompareTo(Top.ModificationDate));
             //        break;
             //}
 
             for (int i = 0; i < temp.Count(); i++)
             {
                 int j = ImageItems.IndexOf(temp.ElementAt(i));
-                if(j != i)
+                if (j != i)
                     ImageItems.Move(j, i);
             }
         }
 
-        private void ShowPreview(ImageItem img, int i)
+        private void ShowPreview(BitmapImage bmi, string str, int i)
         {
             //ImageItems.Add(img);
 
-            ImageItems[i].Fill(img);
+            ImageItems[i].Preview = bmi;
+            ImageItems[i].Directory = str;//Fill(img);
             RaisePropertyChanged("ImageItems");
         }
 
@@ -292,7 +440,30 @@ namespace PicEditor.ViewModel
             foreach (var p in paths)
             {
                 ImageItems.Add(new ImageItem(p));
+                //break;
             }
+
+            foreach (var item in ImageItems)
+            {
+                item.ShowThumbnail();
+                //break;
+            }
+
+            //ThreadsService threads = ThreadsService.GetInstance();
+            //threads.StartNewThread(() =>
+            //{
+            //    Thread.Sleep(100);
+            //    foreach (var item in ImageItems)
+            //    {
+            //        item.ShowThumbnail();
+            //    }
+            //});
+        }
+
+        private void HideRubberBand()
+        {
+            RubberBandHeight = 0;
+            RubberBandWidth = 0;
         }
         #endregion
     }

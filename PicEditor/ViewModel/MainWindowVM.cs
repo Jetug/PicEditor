@@ -18,6 +18,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using NaturalSort.Extension;
 using PicEditor.View;
+using System.Drawing.Imaging;
 
 namespace PicEditor.ViewModel
 {
@@ -26,6 +27,7 @@ namespace PicEditor.ViewModel
         #region Константы
         private const int defaultSize = 700;
         private const double imageIndent = 60;
+        //private const double pictureResizeValue = 100;
         #endregion
 
         #region Свойства
@@ -41,19 +43,23 @@ namespace PicEditor.ViewModel
         public BitmapImage DraggablePreview { get; set; }
         public Thickness DraggableMargin { get; set; } = new Thickness(10, 415, 0, 0);
         public Visibility DraggableVisibility { get; set; } = Visibility.Hidden;
-        public UserControl FramePage { get; set; }
+        public Page FramePage { get; set; }
         #endregion
 
         #region Делегаты
         public delegate Point PointHandler();
         public delegate double SizeHandler();
+
         public PointHandler GetMausePosOnWindow;
+        public Action GoBack;
+        public Action GoForward;
         #endregion
 
         #region Поля
-        private MainModel model = new MainModel();
+        private MediaSearcher model = new MediaSearcher();
         private NavigationService global = NavigationService.GetInstance();
-        private readonly FoldersPanel folderPanel = new FoldersPanel();
+        private readonly FoldersPage folderPage = new FoldersPage();
+        private MouseButtonState xButton1;
         #endregion
 
         #region Конструкторы
@@ -64,7 +70,7 @@ namespace PicEditor.ViewModel
 
             global.OpenPicture = (pic) =>
             {
-                PictureVisibility = Visibility.Visible;
+                ShowPicture();
                 Thread.Sleep(10);
                 PictureSource = pic;
 
@@ -72,7 +78,7 @@ namespace PicEditor.ViewModel
 
             global.OpenPictureTR = (pic) =>
             {
-                PictureVisibility = Visibility.Visible;
+                ShowPicture();
                 PictureSource = null;
                 model.GetFullImageTR(pic, (img) => PictureSource = img);
             };
@@ -85,30 +91,14 @@ namespace PicEditor.ViewModel
         {
             get => new DelegateCommand(() =>
             {
-                global.Navigate = (uc) =>
-                {
-                    FramePage = uc;
-                };
-                FramePage = folderPanel;
-                global.HomePage = folderPanel;
-                //imagesPageVM2.Show(@"C:\Users\Jetug\Desktop\Krekk0vTest");
+                FramePage = folderPage;
+                global.HomePage = folderPage;
 
                 ImageWidth = defaultSize - imageIndent * 2;
                 ImageHeight = defaultSize - imageIndent * 2;
 
                 global.ShowPreview = Show;
-                //(bmi) =>
-                //{
-                //    DraggablePreview = bmi;
-                //    DraggableVisibility = Visibility.Visible;
-                //};
-
                 global.HidePreview = Hide;
-                //() =>
-                //{
-                //    DraggableVisibility = Visibility.Hidden;
-                //    DraggablePreview = null;
-                //};
             });
         }
 
@@ -142,30 +132,17 @@ namespace PicEditor.ViewModel
             });
         }
 
-        public ICommand GoBack
-        {
-            get => new DelegateCommand(() =>
-            {
-                global.Navigate(global.HomePage);
-            });
-        }
-
-        public ICommand Goforward
-        {
-            get => new DelegateCommand(() =>
-            {
-                global.Navigate(global.CurrentPage);
-            });
-        }
-
         public ICommand WindowMouseDown
         {
-            get => new DelegateCommand(() =>
+            get => new DelegateCommand<MouseEventArgs>((e) =>
             {
-                if(Mouse.XButton1 == MouseButtonState.Pressed)
-                    global.Navigate(global.HomePage);
-                if (Mouse.XButton2 == MouseButtonState.Pressed)
-                    global.Navigate(global.CurrentPage);
+                xButton1 = e.XButton1;
+                //if (Mouse.XButton1 == MouseButtonState.Pressed)
+                //    if (PictureVisibility == Visibility.Hidden)
+                //        GoBack();
+                //    else HidePicture();
+                //if (Mouse.XButton2 == MouseButtonState.Pressed)
+                //    GoForward();
             });
         }
 
@@ -182,23 +159,19 @@ namespace PicEditor.ViewModel
         {
             get => new DelegateCommand(() =>
             {
-                PictureVisibility = Visibility.Hidden;
+                HidePicture();
             });
         }
 
-        public ICommand EscapeDown
+        public ICommand ClosePictureWithKey
         {
-            get => new DelegateCommand<KeyEventArgs>((e) =>
+            get => new DelegateCommand(() =>
             {
-                if (PictureVisibility == Visibility.Visible)
+                var st = Keyboard.GetKeyStates(Key.Escape);
+                if ( ((Keyboard.GetKeyStates(Key.Escape) & KeyStates.Down) > 0) || xButton1 == MouseButtonState.Pressed)
                 {
-                    if (e.Key == Key.Escape)
-                        PictureVisibility = Visibility.Hidden;
-                }
-                else
-                {
-                    //imagesPageVM.UnselectAll.Execute(null); 
-                    //imagesPageVM.IsChecked = false;
+                    HidePicture();
+                    xButton1 = MouseButtonState.Released;
                 }
             });
         }
@@ -208,8 +181,9 @@ namespace PicEditor.ViewModel
             get => new DelegateCommand(() =>
             {
                 global.DraggableImage = null;
-                //global.SelectedImageItems.Clear();
                 DraggableVisibility = Visibility.Hidden;
+
+                //global.MouseLeftButtonUp();
             });
         }
 
@@ -220,7 +194,7 @@ namespace PicEditor.ViewModel
                 System.Windows.Forms.FolderBrowserDialog fbd = new System.Windows.Forms.FolderBrowserDialog();
                 if(fbd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
-                    global.ShowPage<ImagesPanel>(new ImagePageVMParameters(fbd.SelectedPath));
+                    global.ShowPage<ImagesPage>(new DirectoryParameters(fbd.SelectedPath));
                 }
             });
         }
@@ -240,29 +214,6 @@ namespace PicEditor.ViewModel
                     double x = GetMausePosOnWindow().X - global.ImageMouseX;
                     double y = GetMausePosOnWindow().Y - global.ImageMouseY;
                     DraggableMargin = new Thickness(x, y, 0, 0);
-
-                    //global.ShowPreview(null);
-                }
-            });
-        }
-
-        private const double pictureResizeValue = 100;
-        public ICommand ResizePicture
-        {
-            get => new DelegateCommand<MouseWheelEventArgs>((e) =>
-            {
-                if(Keyboard.Modifiers == ModifierKeys.Control)
-                {
-                    if (e.Delta > 0)
-                    {
-                        ImageHeight += pictureResizeValue;
-                        ImageWidth += pictureResizeValue;
-                    }
-                    else if (ImageHeight - pictureResizeValue > pictureResizeValue && ImageWidth - pictureResizeValue > pictureResizeValue)
-                    {
-                        ImageHeight -= pictureResizeValue;
-                        ImageWidth -= pictureResizeValue;
-                    }
                 }
             });
         }
@@ -292,5 +243,15 @@ namespace PicEditor.ViewModel
             });
         }
         #endregion
+
+        private void ShowPicture()
+        {
+            PictureVisibility = Visibility.Visible;
+        }
+
+        private void HidePicture()
+        {
+            PictureVisibility = Visibility.Hidden;
+        }
     }
 }

@@ -32,4 +32,17 @@
     <Color x:Key="MouseOverBorderColor">#FF5D5C5C</Color>
     <SolidColorBrush x:Key="MouseOverBorderBrush"
                      Color="{StaticResource MouseOverBorderColor}" />
+
+    <Color x:Key="DisabledBackgroundColor">#FF363636</Color>
+    <SolidColorBrush x:Key="DisabledBackgroundBrush"
+                     Color="{StaticResource DisabledBackgroundColor}" />
+
+    <Color x:Key="DisabledForegroundColor">#FFA5D4D6</Color>
+    <SolidColorBrush x:Key="DisabledForegroundBrush"
+                     Color="{StaticResource DisabledForegroundColor}" />
+
+    <Color x:Key="DisabledBorderColor">#FF323131</Color>
+    <SolidColorBrush x:Key="DisabledBorderBrush"
+                     Color="{StaticResource DisabledBorderColor}" />
+
 </ResourceDictionary>

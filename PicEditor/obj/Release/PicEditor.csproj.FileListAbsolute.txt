@@ -147,8 +147,6 @@ C:\Users\kserg\YandexDisk\Projects\C#\PicEditor\PicEditor\obj\Release\Styles\But
 C:\Users\kserg\YandexDisk\Projects\C#\PicEditor\PicEditor\obj\Release\Styles\Styles.baml
 C:\Users\kserg\YandexDisk\Projects\C#\PicEditor\PicEditor\obj\Release\Styles\WindowStyle.baml
 C:\Users\kserg\YandexDisk\Projects\C#\PicEditor\PicEditor\obj\Release\Styles\WindowStyle.g.cs
-C:\Users\kserg\YandexDisk\Projects\C#\PicEditor\PicEditor\obj\Release\View\FoldersPanel.g.cs
-C:\Users\kserg\YandexDisk\Projects\C#\PicEditor\PicEditor\obj\Release\View\ImagesPanel.g.cs
 C:\Users\kserg\YandexDisk\Projects\C#\PicEditor\PicEditor\obj\Release\View\MainWindow.g.cs
 C:\Users\kserg\YandexDisk\Projects\C#\PicEditor\PicEditor\obj\Release\View\RenamingWindow.g.cs
 C:\Users\kserg\YandexDisk\Projects\C#\PicEditor\PicEditor\obj\Release\App.g.cs
@@ -157,8 +155,6 @@ C:\Users\kserg\YandexDisk\Projects\C#\PicEditor\PicEditor\obj\Release\PicEditor_
 C:\Users\kserg\YandexDisk\Projects\C#\PicEditor\PicEditor\obj\Release\PicEditor_MarkupCompile.lref
 C:\Users\kserg\YandexDisk\Projects\C#\PicEditor\PicEditor\obj\Release\App.baml
 C:\Users\kserg\YandexDisk\Projects\C#\PicEditor\PicEditor\obj\Release\Styles\MenuStyle.baml
-C:\Users\kserg\YandexDisk\Projects\C#\PicEditor\PicEditor\obj\Release\View\FoldersPanel.baml
-C:\Users\kserg\YandexDisk\Projects\C#\PicEditor\PicEditor\obj\Release\View\ImagesPanel.baml
 C:\Users\kserg\YandexDisk\Projects\C#\PicEditor\PicEditor\obj\Release\View\MainWindow.baml
 C:\Users\kserg\YandexDisk\Projects\C#\PicEditor\PicEditor\obj\Release\View\RenamingWindow.baml
 C:\Users\kserg\YandexDisk\Projects\C#\PicEditor\PicEditor\obj\Release\PicEditor.g.resources
@@ -169,3 +165,7 @@ C:\Users\kserg\YandexDisk\Projects\C#\PicEditor\PicEditor\obj\Release\PicEditor.
 C:\Users\kserg\YandexDisk\Projects\C#\PicEditor\PicEditor\obj\Release\PicEditor.csproj.CopyComplete
 C:\Users\kserg\YandexDisk\Projects\C#\PicEditor\PicEditor\obj\Release\PicEditor.exe
 C:\Users\kserg\YandexDisk\Projects\C#\PicEditor\PicEditor\obj\Release\PicEditor.pdb
+C:\Users\kserg\YandexDisk\Projects\C#\PicEditor\PicEditor\obj\Release\View\FoldersPage.g.cs
+C:\Users\kserg\YandexDisk\Projects\C#\PicEditor\PicEditor\obj\Release\View\ImagesPage.g.cs
+C:\Users\kserg\YandexDisk\Projects\C#\PicEditor\PicEditor\obj\Release\View\FoldersPage.baml
+C:\Users\kserg\YandexDisk\Projects\C#\PicEditor\PicEditor\obj\Release\View\ImagesPage.baml

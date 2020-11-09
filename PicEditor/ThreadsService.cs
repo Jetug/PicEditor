@@ -32,10 +32,10 @@ namespace PicEditor
             Thread thread = null;
             thread = new Thread(() =>
             {
+                threads.Add(thread);
                 start();
                 threads.Remove(thread);
             });
-            threads.Add(thread);
             thread.Start();
 
             return thread;

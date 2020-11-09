@@ -1,1 +1,2 @@
-﻿E:\TestPictures
+﻿C:\Users\kserg\OneDrive\Рабочий стол\imgs
+E:\TestPictures

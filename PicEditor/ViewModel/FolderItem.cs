@@ -1,14 +1,11 @@
 ﻿using System;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
-using System.Windows.Controls;
 using DevExpress.Mvvm;
 using PicEditor.Model;
-using System.Security.Policy;
-using System.Collections.Generic;
-using System.Threading;
 using PicEditor.View;
 
 namespace PicEditor.ViewModel
@@ -18,6 +15,8 @@ namespace PicEditor.ViewModel
         #region Константы
         private const int imgWidgh = 150;
         private const int imgHeigh = 150;
+        private const int imgSize = 150;
+
         private const double thickness = 10;
         #endregion
 
@@ -25,7 +24,7 @@ namespace PicEditor.ViewModel
         public double Width { get; set; } = imgWidgh;
         public double Height { get; set; } = imgHeigh;
         private string path = "";
-        public string FullPath
+        public string Directory
         {
             get => path;
             set
@@ -46,7 +45,7 @@ namespace PicEditor.ViewModel
         #endregion
 
         #region Поля
-        private MainModel model = new MainModel();
+        private MediaSearcher model = new MediaSearcher();
         private NavigationService global = NavigationService.GetInstance();
         #endregion
 
@@ -54,17 +53,24 @@ namespace PicEditor.ViewModel
 
         public FolderItem(string fullPath)
         {
-            FullPath = fullPath;
+            Directory = fullPath;
         }
 
         public FolderItem(BitmapImage source, string fullPath)
         {
             Preview = source;
-            FullPath = fullPath;
+            Directory = fullPath;
         }
         #endregion
 
-        #region Commands
+        #region Публичные мотоды
+        public async void ShowThumbnail()
+        {
+            Preview = await Task.Factory.StartNew(() => model.GetFolderThumbnail(Directory, imgSize));
+        }
+        #endregion
+
+        #region Команды
         public ICommand FolderMouseEnter
         {
             get => new DelegateCommand(() =>
@@ -85,30 +91,27 @@ namespace PicEditor.ViewModel
             });
         }
 
-        public ICommand FolderLeftButtonUp
+        //public ICommand FolderLeftButtonUp
+        //{
+        //    get => new DelegateCommand(() =>
+        //    {
+        //        if (global.ClickedElement == this)
+        //        {
+        //            //BorderThickness = new Thickness(thickness);
+        //            global.ShowPage<ImagesPage>(new DirectoryParameters(Directory));
+        //        }
+        //    });
+        //}
+
+        public ICommand FolderClick
         {
             get => new DelegateCommand(() =>
             {
-                //if (global.FrameHistory.ContainsKey(FullPath))
-                //{
-                //    global.FrameHistory[FullPath].Show(FullPath);
-                //}
-                //else
-                //{
-                //    ImagesPageVM imagesPageVM = new ImagesPageVM();
-                //    global.FrameHistory.Add(FullPath, imagesPageVM);
-                //    imagesPageVM.Show(FullPath);
-                //}
-
-                //ImagesPageVM imagesPageVM = new ImagesPageVM();
-                if (global.ClickedElement == this)
-                {
-                    //BorderThickness = new Thickness(thickness);
-                    global.ShowPage<ImagesPanel>(new ImagePageVMParameters(FullPath));
-                }
+                global.ShowPage<ImagesPage>(new DirectoryParameters(Directory));
             });
         }
-        
+
+
         public ICommand FolderMouseLeave
         {
             get => new DelegateCommand(() =>

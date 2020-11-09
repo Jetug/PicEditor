@@ -48,14 +48,30 @@ namespace PicEditor.ViewModel
         #endregion
 
         #region Поля
-        private MainModel model = new MainModel();
-        private NavigationService global = NavigationService.GetInstance();
+        private int id;
+        private MediaSearcher model = new MediaSearcher();
+        private NavigationService navigation = NavigationService.GetInstance();
         #endregion
 
         #region Конструкторы
         public FoldersPageVM()
         {
-            model.ShowFolder = (fi) => FolderItems.Add(fi);
+            //id = navigation.GetID();
+            //Parameters param = navigation.GetParameters(id);
+            //switch (param)
+            //{
+
+            //    case VoidParameters vp:
+
+            //    break;
+            //    default:
+            //        break;
+            //}
+            model.ShowFolder = (bmi, str) => {
+                var fi = new FolderItem(bmi, str);
+                fi.ShowThumbnail();
+                FolderItems.Add(fi);
+            };
             model.ShowFolders();
         }
         #endregion
@@ -87,7 +103,7 @@ namespace PicEditor.ViewModel
                 }
             });
         }
-        
+
         public ICommand SelectAll
         {
             get => new DelegateCommand(() =>
@@ -106,6 +122,66 @@ namespace PicEditor.ViewModel
                 for (int i = 0; i < FolderItems.Count; i++)
                 {
                     FolderItems[i].IsSelected = false;
+                }
+            });
+        }
+
+        public ICommand ClearPage
+        {
+            get => new DelegateCommand(() =>
+            {
+                FolderItems.Clear();
+            });
+        }
+
+        public ICommand AddFolders
+        {
+            get => new DelegateCommand(() =>
+            {
+                System.Windows.Forms.FolderBrowserDialog fbd = new System.Windows.Forms.FolderBrowserDialog();
+                if (fbd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                {
+                    model.ScanNestedFolders(fbd.SelectedPath);
+                }
+            });
+        }
+
+        public ICommand FolderDrop
+        {
+            get => new DelegateCommand<DragEventArgs>((e) =>
+            {
+                string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+                foreach (var f in files)
+                {
+                    string path;
+                    if (LinkConverter.IsLink(f))
+                        path = LinkConverter.GetLnkTarget(f);
+                    else
+                        path = f;
+
+                    if (Directory.Exists(path))
+                    {
+                        bool b = true;
+                        foreach (var fi in FolderItems)
+                        {
+                            if (fi.Directory == path)
+                            {
+                                b = false;
+                                break;
+                            }
+                        }
+
+                        //Parallel.ForEach(FolderItems, (fi, state) =>
+                        //{
+                        //    if (fi.Directory == path)
+                        //    {
+                        //        b = false;
+                        //        state.Break();
+                        //    }
+                        //});
+
+                        if (b == true) model.ScanNestedFolders(path);
+                    }
                 }
             });
         }

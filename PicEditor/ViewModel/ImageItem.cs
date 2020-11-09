@@ -9,6 +9,9 @@ using PicEditor.Model;
 using System.Security.Policy;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
+using System.Windows.Media;
+using System.Runtime.CompilerServices;
 
 namespace PicEditor.ViewModel
 {
@@ -17,11 +20,12 @@ namespace PicEditor.ViewModel
         #region Константы
         private const int imgWidgh = 150;
         private const int imgHeigh = 150;
+        private const int imgSize = 150;
         #endregion
 
         #region Свойства
         private string path = "";
-        public string FullPath
+        public string Directory
         {
             get => path;
             set
@@ -37,26 +41,39 @@ namespace PicEditor.ViewModel
         public string Extension { get; private set; }
         public BitmapImage Preview { get; set; } = null;
         private BitmapImage _fullImage = null;
-        public BitmapImage FullImage 
+        public BitmapImage FullImage
         {
             get
             {
-                if(_fullImage == null)
-                    _fullImage = model.GetFullImage(FullPath);
+                if (_fullImage == null)
+                    _fullImage = model.GetFullImage(Directory);
                 return _fullImage;
             }
         }
         public DateTime CreationDate { get; set; }
         public DateTime ModificationDate { get; set; }
         public Point ImageMousePos { get; set; }
+        public PointHandler<Visual> GetPositionOn { get; set; }
 
         public double Width { get; set; } = imgWidgh;
         public double Height { get; set; } = imgHeigh;
-        public bool IsSelected { get; set; }
+        private bool isSelected = false;
+        public bool IsSelected 
+        {
+            get => isSelected;
+            set
+            {
+                if (isSelected != value)
+                {
+                    isSelected = value;
+                    RaisePropertiesChanged();
+                }
+            }
+        }
         #endregion
 
         #region Поля
-        private MainModel model = new MainModel();
+        private MediaSearcher model = new MediaSearcher();
         private NavigationService global = NavigationService.GetInstance();
         #endregion
 
@@ -64,20 +81,8 @@ namespace PicEditor.ViewModel
 
         public ImageItem(string fullPath)
         {
-            FullPath = fullPath;
-        }
-
-        public ImageItem(BitmapImage source)
-        {
-            Preview = source;
-        }
-
-        public ImageItem(BitmapImage source, string fullPath, double width = imgWidgh, double height = imgHeigh)
-        {            
-            Preview = source;
-            FullPath = fullPath;
-            Width = width;
-            Height = height;
+            Directory = fullPath;
+            //ShowThumbnail();
         }
         #endregion
 
@@ -93,17 +98,24 @@ namespace PicEditor.ViewModel
             return image;
         }
 
+        public async void ShowThumbnail()
+        {
+            //model.GetThumbnailAsync(Directory, imgSize, (bmi) => Preview = bmi);
+            
+            await Task.Factory.StartNew(() => Preview = model.GetThumbnail(Directory, imgSize));
+        }
+
         public void Fill(ImageItem it)
         {
             Preview = it.Preview;
             //FullImage = it.FullImage;
-            FullPath = it.FullPath;
+            Directory = it.Directory;
         }
 
         public void SetDate()
         {
-            CreationDate = File.GetCreationTime(FullPath);
-            ModificationDate = File.GetLastWriteTime(FullPath);
+            CreationDate = File.GetCreationTime(Directory);
+            ModificationDate = File.GetLastWriteTime(Directory);
         }
         #endregion
 
@@ -128,10 +140,10 @@ namespace PicEditor.ViewModel
         {
             get => new DelegateCommand(() =>
             {
-                if (Keyboard.Modifiers == ModifierKeys.Control && Mouse.LeftButton == MouseButtonState.Pressed)
-                {
-                    Select();
-                }
+                //if (Keyboard.Modifiers == ModifierKeys.Control && Mouse.LeftButton == MouseButtonState.Pressed)
+                //{
+                //    Select();
+                //}
             });
         }
 
@@ -156,15 +168,15 @@ namespace PicEditor.ViewModel
         {
             get => new DelegateCommand(() =>
             {
-                if(global.ClickedElement == this)
+                if (global.ClickedElement == this)
                 {
                     //global.OpenPicture(FullImage);
-                    global.OpenPictureTR(FullPath);
+                    global.OpenPictureTR(Directory);
                 }
                 else if (Keyboard.Modifiers != ModifierKeys.Control)
                 {
                     //int i = ImagesPageVM.ImageItems.IndexOf(this);
-                    var path = Path.GetDirectoryName(FullPath);
+                    var path = Path.GetDirectoryName(Directory);
                     var imageItems = global.ImageItemCollections[path];
                     int i = imageItems.IndexOf(this);
                     global.DraggableImage = null;
@@ -176,6 +188,18 @@ namespace PicEditor.ViewModel
                     }
                     //global.SelectedImageItems.Clear();
                 }
+            });
+        }
+        
+        public ICommand ThumbnailClick
+        {
+            get => new DelegateCommand(() =>
+            {
+                //if (Keyboard.Modifiers == ModifierKeys.Control)
+                //{
+                //    Select();
+                //}
+                global.OpenPictureTR(Directory);
             });
         }
 
@@ -196,10 +220,10 @@ namespace PicEditor.ViewModel
         {
             get => new DelegateCommand(() =>
             {
-                var path = Path.GetDirectoryName(FullPath);
+                var path = Path.GetDirectoryName(Directory);
                 var imageItems = global.ImageItemCollections[path];
                 imageItems.Remove(this);
-                File.Delete(FullPath);
+                File.Delete(Directory);
             });
         }
 
@@ -207,7 +231,7 @@ namespace PicEditor.ViewModel
         {
             get => new DelegateCommand(() =>
             {
-                
+
             });
         }
         #endregion

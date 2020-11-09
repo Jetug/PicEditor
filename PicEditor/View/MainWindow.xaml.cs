@@ -12,11 +12,18 @@ namespace PicEditor
         public MainWindow()
         {
             InitializeComponent();
+            //CheckForIllegalCrossThreadCall
             MainWindowVM vm = (DataContext as MainWindowVM);
             vm.Window = window;
             vm.GetMausePosOnWindow = () => Mouse.GetPosition(window);
             //ImagesPage imagesPage = new ImagesPage();
             //frame.Navigate(imagesPage);
+            vm.GoBack = () => { if (frame.CanGoBack) frame.GoBack(); };
+            vm.GoForward = () => { if (frame.CanGoForward) frame.GoForward(); };
+
+            NavigationService navigation = NavigationService.GetInstance();
+            navigation.Navigate = frame.Navigate;
+            navigation.GetMousePosition = () => Mouse.GetPosition(window);
         }
 
         private void pic_KeyDown(object sender, KeyEventArgs e)

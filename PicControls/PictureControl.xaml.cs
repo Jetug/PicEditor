@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,7 +24,19 @@ namespace PicControls
         public PictureControl()
         {
             InitializeComponent();
+
+            var dp1 = DependencyPropertyDescriptor.FromProperty(ImageHeightProperty, typeof(ThumbnailControl));
+            dp1?.AddValueChanged(this, ImageHeightHandler);
         }
+
+        private void ImageHeightHandler(object sender, EventArgs eventArgs)
+        {
+
+        }
+
+        #region Константы
+        private const double pictureResizeValue = 100;
+        #endregion
 
         #region DependencyProperty
         public BitmapImage ImageSource
@@ -106,7 +119,7 @@ namespace PicControls
 
         private void pictureControl_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            if(Mouse.XButton2 == MouseButtonState.Pressed)
+            if (Mouse.XButton2 == MouseButtonState.Pressed)
             {
                 //pictureControl.Visibility = Visibility.Hidden;
             }
@@ -114,15 +127,76 @@ namespace PicControls
 
         private void pictureControl_MouseWheel(object sender, MouseWheelEventArgs e)
         {
-            if (e.Delta > 0)
+            if (Keyboard.Modifiers == ModifierKeys.Control)
             {
-                ShowNextPicture?.Execute(null);
+                if (e.Delta > 0)
+                {
+                    ShowNextPicture?.Execute(null);
+                }
+                else if (e.Delta < 0)
+                {
+                    ShowPerviousPicture?.Execute(null);
+                }
             }
-            else if (e.Delta < 0)
+            else
             {
-                ShowPerviousPicture?.Execute(null);
+                if (e.Delta > 0)
+                {
+                    ImageHeight += pictureResizeValue;
+                    ImageWidth += pictureResizeValue;
+                }
+                else if (ImageHeight - pictureResizeValue > pictureResizeValue && ImageWidth - pictureResizeValue > pictureResizeValue)
+                {
+                    ImageHeight -= pictureResizeValue;
+                    ImageWidth -= pictureResizeValue;
+                }
             }
         }
+
+        private void pictureControl_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (Mouse.LeftButton == MouseButtonState.Pressed)
+            {
+                var pos = Mouse.GetPosition(pictureControl) - posOnImage;
+
+                if (image.HorizontalAlignment == HorizontalAlignment.Center)
+                {
+                    image.HorizontalAlignment = HorizontalAlignment.Left;
+                    image.VerticalAlignment = VerticalAlignment.Top;
+                }
+
+                image.Margin = new Thickness(pos.X, pos.Y, 0, 0);
+            }
+        }
+
+        private void image_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            posOnImage = Mouse.GetPosition(image);
+        }
         #endregion
+
+        public void ResetPicture()
+        {
+            image.HorizontalAlignment = HorizontalAlignment.Center;
+            image.VerticalAlignment = VerticalAlignment.Center;
+            image.Margin = new Thickness(0);
+            image.Height = initialHeight;
+            image.Width = initialWidth;
+        }
+
+        private static Point posOnImage;
+        private double initialHeight = 0;
+        private double initialWidth = 0;
+
+        private void pictureControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            //ResetPicture();
+        }
+
+        private void pictureControl_Initialized(object sender, EventArgs e)
+        {
+            initialHeight = image.Height;
+            initialWidth = image.Width;
+        }
     }
 }

@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
+﻿using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interactivity;
+using System.Windows.Media;
 
 namespace PicEditor.Behaviours
 {
@@ -20,6 +15,9 @@ namespace PicEditor.Behaviours
 
         public static readonly DependencyProperty ActualWidthProperty = DependencyProperty.Register(
             "ActualWidth", typeof(double), typeof(MVVMBehaviour), new PropertyMetadata(default(double)));
+
+        public static readonly DependencyProperty GetPositionOnProperty = DependencyProperty.Register(
+            "GetPositionOn", typeof(PointHandler<Visual>), typeof(MVVMBehaviour), new PropertyMetadata());
 
         public Point MousePos
         {
@@ -39,17 +37,30 @@ namespace PicEditor.Behaviours
             set { SetValue(ActualWidthProperty, value); }
         }
 
+        public PointHandler<Visual> GetPositionOn
+        {
+            get { return (PointHandler<Visual>)GetValue(GetPositionOnProperty); }
+            set { SetValue(GetPositionOnProperty, value); }
+        }
+
         protected override void OnAttached()
         {
             AssociatedObject.MouseMove += AssociatedObjectOnMouseMove;
             ActualHeight = AssociatedObject.ActualHeight;
             ActualWidth = AssociatedObject.ActualWidth;
+            GetPositionOn = GetPreviewControlPosition;
         }
 
         private void AssociatedObjectOnMouseMove(object sender, MouseEventArgs mouseEventArgs)
         {
             var pos = mouseEventArgs.GetPosition(AssociatedObject);
             MousePos = pos;
+        }
+
+        private Point GetPreviewControlPosition(Visual parent)
+        {
+            Point relativePoint = AssociatedObject.TransformToAncestor(parent).Transform(new Point(0, 0));
+            return relativePoint;
         }
 
         protected override void OnDetaching()
