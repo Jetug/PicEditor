@@ -230,7 +230,7 @@
                                     <i:InvokeCommandAction Command="{Binding ImageMouseEnter}" />
                                 </i:EventTrigger>
 
-                                <i:EventTrigger EventName="MouseMove">
+                                <i:EventTrigger EventName="PreviewMouseMove">
                                     <i:InvokeCommandAction Command="{Binding ImageMouseMove}" />
                                 </i:EventTrigger>
 

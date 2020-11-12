@@ -15,9 +15,9 @@
         WindowStartupLocation="CenterScreen"
         Style="{DynamicResource WindowStyle}"
         Title="MainWindow"
-        Width="{Binding ImageWidth}"
-        Height="{Binding ImageHeight}"
-        MinWidth="720"
+        Width="630"
+        Height="690"
+        MinWidth="680"
         MinHeight="690"
         Name="window">
     <!--#region ds-->
@@ -65,10 +65,14 @@
     </i:Interaction.Triggers>
 
     <Grid Background="{DynamicResource BackgroundBrush}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="110" />
+            <ColumnDefinition Width="119*" />
+        </Grid.ColumnDefinitions>
         <Button Command="{Binding Ok}"
                 Content="Button"
                 HorizontalAlignment="Left"
-                Margin="25,55,0,0"
+                Margin="10,55,0,0"
                 VerticalAlignment="Top"
                 Width="95"
                 Height="45"
@@ -78,7 +82,7 @@
                 Style="{DynamicResource ButtonStyle}"
                 Content="Button"
                 HorizontalAlignment="Left"
-                Margin="25,125,0,0"
+                Margin="10,125,0,0"
                 VerticalAlignment="Top"
                 Width="95"
                 Height="35" />
@@ -86,8 +90,9 @@
         <Frame Name="frame"
                Content="{Binding FramePage}"
                NavigationUIVisibility="Visible"
-               Margin="165,0,10,10"
-               Style="{DynamicResource FrameStyle}" />
+               Margin="2,0,10,10"
+               Style="{DynamicResource FrameStyle}"
+               Grid.Column="1" />
         <!--#region -->
         <!--<Grid Margin="165,14,0,0"
               MinHeight="620"
@@ -113,7 +118,7 @@
         <Button Content="Открыть &#xD;&#xA;  папку"
                 Command="{Binding OpenFolder}"
                 HorizontalAlignment="Left"
-                Margin="25,290,0,0"
+                Margin="10,275,0,0"
                 VerticalAlignment="Top"
                 Width="95"
                 Height="51"
@@ -122,19 +127,9 @@
                 Style="{DynamicResource ButtonStyle}">
         </Button>
 
-        <Button Command="{Binding Sort}"
-                Content="Sort"
-                HorizontalAlignment="Left"
-                Margin="25,14,0,0"
-                VerticalAlignment="Top"
-                Width="56"
-                Height="24"
-                Style="{DynamicResource ButtonStyle}"
-                IsEnabled="False"/>
-
         <Grid HorizontalAlignment="Left"
               Height="214"
-              Margin="25,435,0,0"
+              Margin="0,441,0,0"
               VerticalAlignment="Top"
               Width="115">
             <TextBlock x:Name="tb"
@@ -163,7 +158,7 @@
 
         <Button Content="Button"
                 HorizontalAlignment="Left"
-                Margin="25,365,0,0"
+                Margin="10,365,0,0"
                 VerticalAlignment="Top"
                 Width="95"
                 Height="45"
@@ -172,14 +167,15 @@
                 BorderBrush="{DynamicResource BorderBrush}" />
 
         <pic:ThumbnailControl ImageSource="{Binding DraggablePreview}"
-                            Visibility="{Binding DraggableVisibility}"
-                            ImageName="{Binding DraggableName}"
-                            Height="150"
-                            Width="150"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Top"
-                            Margin="{Binding DraggableMargin}"
-                            IsHitTestVisible="False" />
+                              Visibility="{Binding DraggableVisibility}"
+                              ImageName="{Binding DraggableName}"
+                              Height="150"
+                              Width="150"
+                              HorizontalAlignment="Left"
+                              VerticalAlignment="Top"
+                              Margin="{Binding DraggableMargin}"
+                              IsHitTestVisible="False"
+                              Grid.ColumnSpan="2" />
 
         <pic:PictureControl Name="pic"
                             BackgroundOpacity="0.9"
@@ -188,7 +184,8 @@
                             BGMouseLeftButtonDown="{Binding ClosePicture}"
                             ImageHeight="{Binding ImageHeight}"
                             ImageWidth="{Binding ImageWidth}"
-                            KeyDown="pic_KeyDown">
+                            KeyDown="pic_KeyDown"
+                            Grid.ColumnSpan="2">
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="MouseUp">
                     <i:InvokeCommandAction Command="{Binding ClosePictureWithKey}" />

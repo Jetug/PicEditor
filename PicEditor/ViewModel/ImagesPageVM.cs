@@ -235,11 +235,10 @@ namespace PicEditor.ViewModel
                             Point topLeft = item.GetPositionOn(page);
                             Point bottomRight = new Point(topLeft.X + PreviewWidth, topLeft.Y + PreviewHeight);
 
-                            Rectangle rectangle1 = new Rectangle((int)topLeft.X, (int)topLeft.Y, (int)PreviewWidth, (int)PreviewHeight);
-                            Rectangle rectangle2 = new Rectangle((int)startPoint.X, (int)startPoint.Y, (int)width, (int)height);
-                            int res = IndexOfInnerRectangle(rectangle1, rectangle2);
+                            LogicRectangle rectangle1 = new LogicRectangle(topLeft, bottomRight);
+                            LogicRectangle rectangle2 = new LogicRectangle(startPoint, endPoint);
 
-                            if (Intersects(rectangle1, rectangle2))//if (IsCrossing(topLeft, bottomRight, startPoint, endPoint))
+                            if (rectangle1.Intersects(rectangle2))
                             {
                                 item.IsSelected = true;
                             }
@@ -250,63 +249,7 @@ namespace PicEditor.ViewModel
             });
         }
 
-        bool Intersects (Rectangle r1, Rectangle r2)
-        {
-            return
-            (
-                (
-                    ((r1.Left>=r2.Left && r1.Left<=r2.Right )||(r1.Right>=r2.Left && r1.Right<=r2.Right )) 
-                    && 
-                    ((r1.Top>=r2.Top && r1.Top<=r2.Bottom )||(r1.Bottom>=r2.Top && r1.Bottom<=r2.Bottom ))
-                ) 
-                ||
-                (
-                    ((r2.Left>=r1.Left && r2.Left<=r1.Right) || (r2.Right>=r1.Left && r2.Right<=r1.Right )) 
-                    && 
-                    ((r2.Top>=r1.Top && r2.Top<=r1.Bottom) || (r2.Bottom>=r1.Top && r2.Bottom<=r1.Bottom ))
-                )
-            ) 
-            ||
-            (
-                (
-                    ((r1.Left>=r2.Left && r1.Left<=r2.Right )||(r1.Right>=r2.Left && r1.Right<=r2.Right )) 
-                    && 
-                    ((r2.Top>=r1.Top && r2.Top<=r1.Bottom )||(r2.Bottom>=r1.Top && r2.Bottom<=r1.Bottom ))
-                ) 
-                ||
-                (
-                    ((r2.Left>=r1.Left && r2.Left<=r1.Right )||(r2.Right>=r1.Left && r2.Right<=r1.Right )) 
-                    && 
-                    ((r1.Top>=r2.Top && r1.Top<=r2.Bottom )||(r1.Bottom>=r2.Top && r1.Bottom<=r2.Bottom ))
-                )
-            );
-        }
-
-        //bool Intersects(Rectangle r1, Rectangle r2)
-        //{
-        //    if (r1.Left > r2.Right || r1.Right < r2.Left || r1.Top < r2.Bottom || r1.Bottom > r2.Top) return false;
-        //    return true;
-        //}
-
-        public static int IndexOfInnerRectangle(Rectangle r1, Rectangle r2)
-        {
-            if (CompareRectangle(r1, r2)) return 0;
-            if (CompareRectangle(r2, r1)) return 1;
-            return -1;
-        }
-
-        public static bool CompareRectangle(Rectangle r1, Rectangle r2)
-        {
-            return r1.Left >= r2.Left
-                 && r1.Right <= r2.Right
-                 && r1.Top >= r2.Top
-                 && r1.Bottom <= r2.Bottom;
-        }
-
-        private bool IsCrossing(Point startPoint1, Point endPoint1, Point startPoint2, Point endPoint2)
-        {
-            return _IsCrossing(startPoint1, endPoint1, startPoint2, endPoint2) || _IsCrossing(startPoint2, endPoint2, startPoint1, endPoint1);
-        }
+        
 
         private bool _IsCrossing(Point _startPoint1, Point _endPoint1, Point _startPoint2, Point _endPoint2)
         {

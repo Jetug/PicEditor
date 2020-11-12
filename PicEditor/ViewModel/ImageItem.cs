@@ -65,6 +65,9 @@ namespace PicEditor.ViewModel
             {
                 if (isSelected != value)
                 {
+                    if(value == true) 
+                        global.SelectedImageItems.Add(this);
+                    else global.SelectedImageItems.Remove(this);
                     isSelected = value;
                     RaisePropertiesChanged();
                 }
@@ -120,21 +123,21 @@ namespace PicEditor.ViewModel
         #endregion
 
         #region Команды
-        public ICommand ImageSelected
-        {
-            get => new DelegateCommand(() =>
-            {
-                global.SelectedImageItems.Add(this);
-            });
-        }
+        //public ICommand ImageSelected
+        //{
+        //    get => new DelegateCommand(() =>
+        //    {
+        //        global.SelectedImageItems.Add(this);
+        //    });
+        //}
 
-        public ICommand ImageUnselected
-        {
-            get => new DelegateCommand(() =>
-            {
-                global.SelectedImageItems.Remove(this);
-            });
-        }
+        //public ICommand ImageUnselected
+        //{
+        //    get => new DelegateCommand(() =>
+        //    {
+        //        global.SelectedImageItems.Remove(this);
+        //    });
+        //}
 
         public ICommand ImageMouseEnter
         {
@@ -151,11 +154,7 @@ namespace PicEditor.ViewModel
         {
             get => new DelegateCommand(() =>
             {
-                if (Keyboard.Modifiers == ModifierKeys.Control)
-                {
-                    Select();
-                }
-                else
+                if (Keyboard.Modifiers != ModifierKeys.Control)
                 {
                     global.ClickedElement = this;
                     global.ImageMouseX = ImageMousePos.X;
@@ -170,8 +169,7 @@ namespace PicEditor.ViewModel
             {
                 if (global.ClickedElement == this)
                 {
-                    //global.OpenPicture(FullImage);
-                    global.OpenPictureTR(Directory);
+                    //global.OpenPictureTR(Directory);
                 }
                 else if (Keyboard.Modifiers != ModifierKeys.Control)
                 {
@@ -195,11 +193,14 @@ namespace PicEditor.ViewModel
         {
             get => new DelegateCommand(() =>
             {
-                //if (Keyboard.Modifiers == ModifierKeys.Control)
-                //{
-                //    Select();
-                //}
-                global.OpenPictureTR(Directory);
+                if (Keyboard.Modifiers == ModifierKeys.Control)
+                {
+                    Select();
+                }
+                else
+                {
+                    global.OpenPictureTR(Directory);
+                }
             });
         }
 

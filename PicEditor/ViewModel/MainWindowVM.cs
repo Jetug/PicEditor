@@ -37,8 +37,8 @@ namespace PicEditor.ViewModel
         public BitmapImage PictureSource { get; set; }
         public double WindowWidght { get; set; }
         public double WindowHeight{ get; set; }
-        public double ImageWidth { get; set; } = defaultSize ;
-        public double ImageHeight { get; set; } = defaultSize ;
+        //public double ImageWidth { get; set; } = defaultSize ;
+        //public double ImageHeight { get; set; } = defaultSize ;
 
         public BitmapImage DraggablePreview { get; set; }
         public Thickness DraggableMargin { get; set; } = new Thickness(10, 415, 0, 0);
@@ -94,8 +94,8 @@ namespace PicEditor.ViewModel
                 FramePage = folderPage;
                 global.HomePage = folderPage;
 
-                ImageWidth = defaultSize - imageIndent * 2;
-                ImageHeight = defaultSize - imageIndent * 2;
+                //ImageWidth = defaultSize - imageIndent * 2;
+                //ImageHeight = defaultSize - imageIndent * 2;
 
                 global.ShowPreview = Show;
                 global.HidePreview = Hide;
@@ -137,21 +137,6 @@ namespace PicEditor.ViewModel
             get => new DelegateCommand<MouseEventArgs>((e) =>
             {
                 xButton1 = e.XButton1;
-                //if (Mouse.XButton1 == MouseButtonState.Pressed)
-                //    if (PictureVisibility == Visibility.Hidden)
-                //        GoBack();
-                //    else HidePicture();
-                //if (Mouse.XButton2 == MouseButtonState.Pressed)
-                //    GoForward();
-            });
-        }
-
-        public ICommand SizeChanged
-        {
-            get => new DelegateCommand<SizeChangedEventArgs>((e) =>
-            {
-                ImageWidth = e.NewSize.Width - imageIndent * 2;
-                ImageHeight = e.NewSize.Height - imageIndent * 2;
             });
         }
 
@@ -182,8 +167,6 @@ namespace PicEditor.ViewModel
             {
                 global.DraggableImage = null;
                 DraggableVisibility = Visibility.Hidden;
-
-                //global.MouseLeftButtonUp();
             });
         }
 
