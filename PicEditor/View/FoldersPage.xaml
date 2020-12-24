@@ -6,6 +6,7 @@
       xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
       xmlns:Behaviours="clr-namespace:PicEditor.Behaviours"
       xmlns:pic="clr-namespace:PicControls;assembly=PicControls"
+      xmlns:uc="clr-namespace:PicEditor.UserControls"
       xmlns:Custom="http://www.galasoft.ch/mvvmlight"
       xmlns:j="http://www.galasoft.ch/mvvmlight"
       xmlns:local="clr-namespace:PicEditor.View"
@@ -84,14 +85,14 @@
                                           ActualHeight="{Binding ScrollViewHeight, Mode=OneWayToSource}" />
             </i:Interaction.Behaviors>
             <i:Interaction.Triggers>
-                
+
                 <i:EventTrigger EventName="MouseMove">
                     <i:InvokeCommandAction Command="{Binding Scroll}" />
                 </i:EventTrigger>
 
                 <i:EventTrigger EventName="Drop">
-                    <j:EventToCommand Command="{Binding FolderDrop}" 
-                                      PassEventArgsToCommand="True"/>
+                    <j:EventToCommand Command="{Binding FolderDrop}"
+                                      PassEventArgsToCommand="True" />
                 </i:EventTrigger>
 
             </i:Interaction.Triggers>
@@ -107,20 +108,20 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <pic:ThumbnailControl Width="{Binding DataContext.PreviewWidth, 
+                        <uc:Thumbnail Width="{Binding DataContext.PreviewWidth, 
                                                 RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"
-                                            Height="{Binding DataContext.PreviewHeight,
+                                      Height="{Binding DataContext.PreviewHeight,
                                                 RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"
-                                            Margin="0,0,1,1"
-                                            ImageSource="{Binding Preview}"
-                                            SelectionVisibility="Visible"
-                                            ImageName="{Binding Name}"
-                                            IsSelected="{Binding IsSelected}"
-                                            OnSelected="{Binding ImageSelected}"
-                                            OnUnselected="{Binding ImageUnselected}"
-                                            ClickCommand="{Binding FolderClick}"
-                                            BorderThickness="10"
-                                            BorderBrush="Transparent">
+                                      Margin="0,0,1,1"
+                                      ImageSource="{Binding Preview}"
+                                      SelectionVisibility="Visible"
+                                      ImageName="{Binding Name}"
+                                      IsSelected="{Binding IsSelected}"
+                                      OnSelected="{Binding ImageSelected}"
+                                      OnUnselected="{Binding ImageUnselected}"
+                                      ClickCommand="{Binding FolderClick}"
+                                      BorderThickness="10"
+                                      BorderBrush="Transparent">
                             <i:Interaction.Behaviors>
                                 <Behaviours:MVVMBehaviour MousePos="{Binding ImageMousePos, Mode=OneWayToSource}" />
                             </i:Interaction.Behaviors>
@@ -130,7 +131,7 @@
                                     <i:InvokeCommandAction Command="{Binding ImageMouseMove}" />
                                 </i:EventTrigger>
 
-                                <i:EventTrigger EventName="MouseLeftButtonUp">
+                                <i:EventTrigger EventName="PreviewMouseLeftButtonUp">
                                     <i:InvokeCommandAction Command="{Binding FolderLeftButtonUp}" />
                                 </i:EventTrigger>
 
@@ -147,7 +148,7 @@
                                 </i:EventTrigger>
 
                             </i:Interaction.Triggers>
-                        </pic:ThumbnailControl>
+                        </uc:Thumbnail>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>

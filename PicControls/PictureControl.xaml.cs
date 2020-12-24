@@ -27,6 +27,9 @@ namespace PicControls
 
             var dp1 = DependencyPropertyDescriptor.FromProperty(ImageHeightProperty, typeof(ThumbnailControl));
             dp1?.AddValueChanged(this, ImageHeightHandler);
+
+            var dp3 = DependencyPropertyDescriptor.FromProperty(ImageSourceProperty, typeof(ThumbnailControl));
+            dp3?.AddValueChanged(this, ImageSourceHandler);
         }
 
         private void ImageHeightHandler(object sender, EventArgs eventArgs)
@@ -34,8 +37,32 @@ namespace PicControls
 
         }
 
+        private void ImageSourceHandler(object sender, EventArgs eventArgs)
+        {
+            if(ImageSource != null)
+            {
+                double width = ImageSource.Width;
+                double height = ImageSource.Height;
+                double widthIndent = pictureControl.ActualWidth - imageIndent;
+                double heightIndent = pictureControl.ActualHeight - imageIndent;
+
+                if (width > widthIndent)
+                {
+                    width -= width - widthIndent;
+                }
+                if(height > heightIndent)
+                {
+                    height -= height - heightIndent;
+                }
+
+                ImageHeight = height;
+                ImageWidth = width;
+            }
+        }
+
         #region Константы
         private const double pictureResizeValue = 100;
+        private const double imageIndent = 20;
         #endregion
 
         #region DependencyProperty

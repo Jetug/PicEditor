@@ -127,7 +127,8 @@ namespace PicEditor.ViewModel
         //{
         //    get => new DelegateCommand(() =>
         //    {
-        //        global.SelectedImageItems.Add(this);
+        //        //global.SelectedImageItems.Add(this);
+        //        IsSelected = true;
         //    });
         //}
 
@@ -135,7 +136,8 @@ namespace PicEditor.ViewModel
         //{
         //    get => new DelegateCommand(() =>
         //    {
-        //        global.SelectedImageItems.Remove(this);
+        //        //global.SelectedImageItems.Remove(this);
+        //        IsSelected = false;
         //    });
         //}
 
@@ -195,7 +197,7 @@ namespace PicEditor.ViewModel
             {
                 if (Keyboard.Modifiers == ModifierKeys.Control)
                 {
-                    Select();
+                    //Select();
                 }
                 else
                 {
@@ -208,13 +210,20 @@ namespace PicEditor.ViewModel
         {
             get => new DelegateCommand(() =>
             {
-                if (Mouse.LeftButton == MouseButtonState.Pressed && Keyboard.Modifiers != ModifierKeys.Control && global.ClickedElement == this)
+            if (Mouse.LeftButton == MouseButtonState.Pressed && Keyboard.Modifiers != ModifierKeys.Control && global.ClickedElement == this)
                 {
                     global.DraggableImage = this;
+                    //MouseHook.OnMouseUp += CancelDragging;
                     global.SelectedImageItems.Add(this);
                     global.ShowPreview(Preview);
                 }
             });
+        }
+
+        private void CancelDragging(object sender, Point p)
+        {
+            global.DraggableImage = null;
+            MouseHook.OnMouseUp -= CancelDragging;
         }
 
         public ICommand RemoveImage

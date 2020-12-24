@@ -14,9 +14,7 @@ using System.Windows.Media;
 using System.Windows.Controls;
 using System.Windows.Shapes;
 using System.Drawing;
-using Rectangle = System.Drawing.Rectangle;
 using Point = System.Windows.Point;
-using Size = System.Drawing.Size;
 
 namespace PicEditor.ViewModel
 {
@@ -24,6 +22,7 @@ namespace PicEditor.ViewModel
     {
         #region Константы
         private const int defaultSize = 150;
+        const double scrollOffset = 50;
         #endregion
 
         #region Свойства
@@ -47,6 +46,7 @@ namespace PicEditor.ViewModel
         public double RubberBandHeight { get; set; } = 0;
         public double RubberBandWidth { get; set; } = 0;
         public TranslateTransform RubberBandRenderTransform { get; set; }
+        public static bool NeedRuberBand { get; private set; }
 
         public ObservableCollection<ImageItem> ImageItems { get; set; } = new ObservableCollection<ImageItem> { };
         #endregion
@@ -69,8 +69,9 @@ namespace PicEditor.ViewModel
         private MediaSearcher model = new MediaSearcher();
         private NavigationService global = NavigationService.GetInstance();
         private Point startDragPoint;
-        private bool needRuberBand;
+
         public Page page;
+
         #endregion
 
         #region Конструкторы
@@ -153,29 +154,29 @@ namespace PicEditor.ViewModel
         {
             get => new DelegateCommand(() =>
             {
-                if (Mouse.LeftButton == MouseButtonState.Pressed && global.DraggableImage != null)
-                {
-                    const double trigger = 50;
-                    const double offset = 5;
-                    const int sleep = 1;
-                    Point pos = ScrollViewMousePos;
+                //if (Mouse.LeftButton == MouseButtonState.Pressed && global.DraggableImage != null)
+                //{
+                //    Thread thread = new Thread(() =>
+                //    {
+                //        const double trigger = 50;
+                //        const double offset = 5;
+                //        const int sleep = 1;
+                //        Point pos = ScrollViewMousePos;
 
-                    Thread thread = new Thread(() =>
-                    {
-                        while (ScrollViewMousePos.Y <= trigger)
-                        {
-                            LineUp(offset);
-                            Thread.Sleep(sleep);
-                        }
-                        while (ScrollViewMousePos.Y >= GetScrollViewHeigh() - trigger)
-                        {
-                            LineDown(offset);
-                            Thread.Sleep(sleep);
-                        }
-                    });
+                //        while (ScrollViewMousePos.Y <= trigger)
+                //        {
+                //            LineUp(offset);
+                //            Thread.Sleep(sleep);
+                //        }
+                //        while (ScrollViewMousePos.Y >= GetScrollViewHeigh() - trigger)
+                //        {
+                //            LineDown(offset);
+                //            Thread.Sleep(sleep);
+                //        }
+                //    });
 
-                    thread.Start();
-                }
+                //    thread.Start();
+                //}
             });
         }
 
@@ -183,7 +184,7 @@ namespace PicEditor.ViewModel
         {
             get => new DelegateCommand(() =>
             {
-                needRuberBand = true;
+                NeedRuberBand = true;
                 startDragPoint = GetMausePosOnPage();
                 PageCaptureMouse();
             });
@@ -194,21 +195,53 @@ namespace PicEditor.ViewModel
             get => new DelegateCommand(() =>
             {
                 HideRubberBand();
-                needRuberBand = false;
+                NeedRuberBand = false;
                 PageReleaseMouseCapture();
             });
         }
 
-        public ICommand WinMouseMove
+        public ICommand PageMouseWheel
+        {
+            get => new DelegateCommand<MouseWheelEventArgs>((e) =>
+            {
+                if (Keyboard.Modifiers == ModifierKeys.Control)
+                {
+                    if (e.Delta > 0)
+                    {
+                        PreviewHeight += 10;
+                        PreviewWidth += 10;
+                    }
+                    else if (e.Delta < 0)
+                    {
+                        PreviewHeight -= 10;
+                        PreviewWidth -= 10;
+                    }
+                }
+                else
+                {
+                    if (e.Delta > 0)
+                    {
+                        LineUp(scrollOffset);
+                    }
+                    else if (e.Delta < 0)
+                    {
+                        LineDown(scrollOffset);
+                    }
+                }
+                e.Handled = true;
+            });
+        }
+
+        public ICommand PageMouseMove
         {
             get => new DelegateCommand<MouseEventArgs>((e) =>
             {
-                if (Mouse.LeftButton == MouseButtonState.Pressed && needRuberBand)
+                if (Mouse.LeftButton == MouseButtonState.Pressed && NeedRuberBand)
                 {
                     Point currentPos = GetMausePosOnPage();
                     if (global.DraggableImage != null)
                     {
-                        DraggableMargin = new Thickness(currentPos.X - global.ImageMouseX, currentPos.Y - global.ImageMouseY, 0, 0);
+                        //DraggableMargin = new Thickness(currentPos.X - global.ImageMouseX, currentPos.Y - global.ImageMouseY, 0, 0);
                     }
                     else
                     {
@@ -248,8 +281,6 @@ namespace PicEditor.ViewModel
                 }
             });
         }
-
-        
 
         private bool _IsCrossing(Point _startPoint1, Point _endPoint1, Point _startPoint2, Point _endPoint2)
         {
@@ -320,14 +351,6 @@ namespace PicEditor.ViewModel
                 }
             });
         }
-
-        //public ICommand Test
-        //{
-        //    get => new DelegateCommand(() =>
-        //    {
-        //        ImageItems.Move(0, 5);
-        //    });
-        //}
         #endregion
 
         #region Приватные методы

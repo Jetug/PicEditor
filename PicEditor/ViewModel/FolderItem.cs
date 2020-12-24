@@ -86,22 +86,27 @@ namespace PicEditor.ViewModel
         {
             get => new DelegateCommand(() =>
             {
-                global.ClickedElement = this;
+                //global.ClickedElement = this;
+                //ClickCreator.OnMouseDown(this);
                 //BorderThickness = new Thickness(thickness + 2);
             });
         }
 
-        //public ICommand FolderLeftButtonUp
-        //{
-        //    get => new DelegateCommand(() =>
-        //    {
-        //        if (global.ClickedElement == this)
-        //        {
-        //            //BorderThickness = new Thickness(thickness);
-        //            global.ShowPage<ImagesPage>(new DirectoryParameters(Directory));
-        //        }
-        //    });
-        //}
+        public ICommand FolderLeftButtonUp
+        {
+            get => new DelegateCommand(() =>
+            {
+                //if (ClickCreator.OnMouseUp(this))
+                //{
+                //    global.ShowPage<ImagesPage>(new DirectoryParameters(Directory));
+                //}
+                //if (global.ClickedElement == this)
+                //{
+                //    //BorderThickness = new Thickness(thickness);
+                //    global.ShowPage<ImagesPage>(new DirectoryParameters(Directory));
+                //}
+            });
+        }
 
         public ICommand FolderClick
         {

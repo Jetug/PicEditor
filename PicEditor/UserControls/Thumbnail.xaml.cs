@@ -1,27 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using PicEditor.ViewModel;
+using System;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
-
-namespace PicControls
+namespace PicEditor.UserControls
 {
     /// <summary>
-    /// Логика взаимодействия для PreviewControl.xaml
+    /// Логика взаимодействия для Thumbnail.xaml
     /// </summary>
-    public partial class ThumbnailControl : UserControl, INotifyPropertyChanged
+    public partial class Thumbnail : UserControl, INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -30,14 +21,14 @@ namespace PicControls
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
 
-        public ThumbnailControl()
+        public Thumbnail()
         {
             InitializeComponent();
 
-            var dp1 = DependencyPropertyDescriptor.FromProperty(ImageSourceProperty, typeof(ThumbnailControl));
+            var dp1 = DependencyPropertyDescriptor.FromProperty(ImageSourceProperty, typeof(Thumbnail));
             dp1?.AddValueChanged(this, ImageSourceHandler);
 
-            var dp2 = DependencyPropertyDescriptor.FromProperty(IsSelectedProperty, typeof(ThumbnailControl));
+            var dp2 = DependencyPropertyDescriptor.FromProperty(IsSelectedProperty, typeof(Thumbnail));
             dp2?.AddValueChanged(this, IsSelectedHandler);
         }
 
@@ -48,7 +39,7 @@ namespace PicControls
 
         private void IsSelectedHandler(object sender, EventArgs eventArgs)
         {
-            
+
         }
 
         private Thickness normalBorderThickness;
@@ -65,29 +56,30 @@ namespace PicControls
         }
 
         public static readonly DependencyProperty ImageSourceProperty =
-            DependencyProperty.Register("ImageSource", typeof(BitmapImage), typeof(ThumbnailControl), new PropertyMetadata(null));
+            DependencyProperty.Register("ImageSource", typeof(BitmapImage), typeof(Thumbnail), new PropertyMetadata(null));
 
 
         public BitmapImage DefaultImage
         {
             get { return (BitmapImage)GetValue(DefaultImageProperty); }
-            set {SetValue(DefaultImageProperty, value);}
+            set { SetValue(DefaultImageProperty, value); }
         }
 
         public static readonly DependencyProperty DefaultImageProperty =
-            DependencyProperty.Register("DefaultImage", typeof(BitmapImage), typeof(ThumbnailControl), new PropertyMetadata(null));
+            DependencyProperty.Register("DefaultImage", typeof(BitmapImage), typeof(Thumbnail), new PropertyMetadata(null));
 
 
         public Visibility SelectionVisibility
         {
             get { return (Visibility)GetValue(IsSelectionEnabledProperty); }
-            set { 
+            set
+            {
                 SetValue(IsSelectionEnabledProperty, value);
             }
         }
 
         public static readonly DependencyProperty IsSelectionEnabledProperty =
-            DependencyProperty.Register("SelectionVisibility", typeof(Visibility), typeof(ThumbnailControl), new PropertyMetadata(Visibility.Hidden));
+            DependencyProperty.Register("SelectionVisibility", typeof(Visibility), typeof(Thumbnail), new PropertyMetadata(Visibility.Hidden));
 
 
         public string ImageName
@@ -97,7 +89,7 @@ namespace PicControls
         }
 
         public static readonly DependencyProperty ImageNameProperty =
-            DependencyProperty.Register("ImageName", typeof(string), typeof(ThumbnailControl), new PropertyMetadata());
+            DependencyProperty.Register("ImageName", typeof(string), typeof(Thumbnail), new PropertyMetadata());
 
 
         public bool IsSelected
@@ -107,7 +99,7 @@ namespace PicControls
         }
 
         public static readonly DependencyProperty IsSelectedProperty =
-            DependencyProperty.Register("IsSelected", typeof(bool), typeof(ThumbnailControl), new PropertyMetadata(false));
+            DependencyProperty.Register("IsSelected", typeof(bool), typeof(Thumbnail), new PropertyMetadata(false));
 
 
         public ICommand OnSelected
@@ -117,7 +109,7 @@ namespace PicControls
         }
 
         public static readonly DependencyProperty OnSelectedProperty =
-            DependencyProperty.Register("OnSelected", typeof(ICommand), typeof(ThumbnailControl), new PropertyMetadata());
+            DependencyProperty.Register("OnSelected", typeof(ICommand), typeof(Thumbnail), new PropertyMetadata());
 
 
         public ICommand OnUnselected
@@ -127,7 +119,7 @@ namespace PicControls
         }
 
         public static readonly DependencyProperty OnUnselectedProperty =
-            DependencyProperty.Register("OnUnselected", typeof(ICommand), typeof(ThumbnailControl), new PropertyMetadata());
+            DependencyProperty.Register("OnUnselected", typeof(ICommand), typeof(Thumbnail), new PropertyMetadata());
 
 
         public ICommand PreviewMouseMoveCommand
@@ -137,16 +129,16 @@ namespace PicControls
         }
 
         public static readonly DependencyProperty OnPreviewMouseMoveProperty =
-            DependencyProperty.Register("PreviewMouseMoveCommand", typeof(ICommand), typeof(ThumbnailControl), new PropertyMetadata());
+            DependencyProperty.Register("PreviewMouseMoveCommand", typeof(ICommand), typeof(Thumbnail), new PropertyMetadata());
 
-        //public ICommand ClickCommand
-        //{
-        //    get { return (ICommand)GetValue(ClickCommandProperty); }
-        //    set { SetValue(ClickCommandProperty, value); }
-        ////}
+        public ICommand ClickCommand
+        {
+            get { return (ICommand)GetValue(ClickCommandProperty); }
+            set { SetValue(ClickCommandProperty, value); }
+        }
 
-        //public static readonly DependencyProperty ClickCommandProperty =
-        //    DependencyProperty.Register("ClickCommand", typeof(ICommand), typeof(ThumbnailControl), new PropertyMetadata());
+        public static readonly DependencyProperty ClickCommandProperty =
+            DependencyProperty.Register("ClickCommand", typeof(ICommand), typeof(Thumbnail), new PropertyMetadata());
 
         private void selection_Checked(object sender, RoutedEventArgs e)
         {
@@ -165,7 +157,7 @@ namespace PicControls
 
         private void Image_KeyDown(object sender, KeyEventArgs e)
         {
-            if(e.Key == Key.LeftCtrl)
+            if (e.Key == Key.LeftCtrl)
             {
                 MessageBox.Show("!");
             }
@@ -180,16 +172,20 @@ namespace PicControls
         {
             normalBorderThickness = previewControl.BorderThickness;
             previewControl.BorderThickness = new Thickness(previewControl.BorderThickness.Left + 2);
+            ClickCreator.OnMouseDown(this);
         }
 
         private void previewControl_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             previewControl.BorderThickness = normalBorderThickness;
+            if (ClickCreator.OnMouseUp(this))
+                ClickCommand.Execute(e);
         }
 
         private void previewControl_MouseLeave(object sender, MouseEventArgs e)
         {
             previewControl.BorderThickness = normalBorderThickness;
+            ClickCreator.OnMouseLeave();
         }
 
         private void previewControl_Loaded(object sender, RoutedEventArgs e)

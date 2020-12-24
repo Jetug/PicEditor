@@ -64,14 +64,20 @@ namespace PicEditor.View
 
         private void LineUp(double offset)
         {
-            Application.Current.Dispatcher.Invoke(() =>
-            scrollView.ScrollToVerticalOffset(scrollView.VerticalOffset - offset));
+            if(scrollView.VerticalOffset != 0)
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                    scrollView.ScrollToVerticalOffset(scrollView.VerticalOffset - offset));
+            }
         }
 
         private void LineDown(double offset)
         {
-            Application.Current.Dispatcher.Invoke(() =>
-            scrollView.ScrollToVerticalOffset(scrollView.VerticalOffset + offset));
+            if(scrollView.VerticalOffset != scrollView.ActualHeight)
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                    scrollView.ScrollToVerticalOffset(scrollView.VerticalOffset + offset));
+            }
         }
 
         private void scrollView_MouseMove(object sender, MouseEventArgs e)
@@ -86,6 +92,32 @@ namespace PicEditor.View
         }
 
         private void wrapPanel_MouseEnter(object sender, MouseEventArgs e)
+        {
+
+        }
+
+        private void Grid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+
+        }
+
+        private void Grid_MouseLeftButtonDown_1(object sender, MouseButtonEventArgs e)
+        {
+
+        }
+
+        private void Label_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+
+        }
+
+
+        private void label_MouseMove(object sender, MouseEventArgs e)
+        {
+
+        }
+
+        private void page_MouseWheel(object sender, MouseWheelEventArgs e)
         {
 
         }

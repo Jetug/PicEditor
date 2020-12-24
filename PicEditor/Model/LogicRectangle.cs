@@ -24,34 +24,7 @@ namespace PicEditor.Model
 
         public bool Intersects(LogicRectangle rect)
         {
-            return
-            (
-                (
-                    ((Left >= rect.Left && Left <= rect.Right) || (Right >= rect.Left && Right <= rect.Right))
-                    &&
-                    ((Top >= rect.Top && Top <= rect.Bottom) || (Bottom >= rect.Top && Bottom <= rect.Bottom))
-                )
-                ||
-                (
-                    ((rect.Left >= Left && rect.Left <= Right) || (rect.Right >= Left && rect.Right <= Right))
-                    &&
-                    ((rect.Top >= Top && rect.Top <= Bottom) || (rect.Bottom >= Top && rect.Bottom <= Bottom))
-                )
-            )
-            ||
-            (
-                (
-                    ((Left >= rect.Left && Left <= rect.Right) || (Right >= rect.Left && Right <= rect.Right))
-                    &&
-                    ((rect.Top >= Top && rect.Top <= Bottom) || (rect.Bottom >= Top && rect.Bottom <= Bottom))
-                )
-                ||
-                (
-                    ((rect.Left >= Left && rect.Left <= Right) || (rect.Right >= Left && rect.Right <= Right))
-                    &&
-                    ((Top >= rect.Top && Top <= rect.Bottom) || (Bottom >= rect.Top && Bottom <= rect.Bottom))
-                )
-            );
+            return Intersects(this, rect);
         }
 
         public static bool Intersects(LogicRectangle r1, LogicRectangle r2)

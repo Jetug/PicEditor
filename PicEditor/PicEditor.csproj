@@ -136,7 +136,7 @@
     <Compile Include="Delegates.cs" />
     <Compile Include="Model\LinkConverter.cs" />
     <Compile Include="Model\FileSearcher.cs" />
-    <Compile Include="Model\Rectangle.cs" />
+    <Compile Include="Model\LogicRectangle.cs" />
     <Compile Include="Model\WindowResizer.cs" />
     <Compile Include="MouseHook.cs" />
     <Compile Include="Styles\WindowStyle.xaml.cs">
@@ -145,6 +145,10 @@
     <Compile Include="ThreadsService.cs" />
     <Compile Include="NavigationService.cs" />
     <Compile Include="Model\MediaSearcher.cs" />
+    <Compile Include="UserControls\Thumbnail.xaml.cs">
+      <DependentUpon>Thumbnail.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModel\ClickCreator.cs" />
     <Compile Include="ViewModel\FolderItem.cs" />
     <Compile Include="ViewModel\FoldersPageVM.cs" />
     <Compile Include="ViewModel\ImageItem.cs" />
@@ -186,6 +190,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Styles\WindowStyle.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\Thumbnail.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
