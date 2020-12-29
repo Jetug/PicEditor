@@ -13,12 +13,14 @@ using NaturalSort.Extension;
 using System.Windows.Media;
 using System.Windows.Controls;
 using System.Windows.Shapes;
+using System.Windows.Forms;
 using System.Drawing;
 using Point = System.Windows.Point;
+using Gma.System.MouseKeyHook;
 
 namespace PicEditor.ViewModel
 {
-    class ImagesPageVM : ViewModelBase
+    class ImagesPageVM : ViewModelBase, INavigable
     {
         #region Константы
         private const int defaultSize = 150;
@@ -26,12 +28,44 @@ namespace PicEditor.ViewModel
         #endregion
 
         #region Свойства
+        private IParameters _parameters;
+        public IParameters Parameters
+        {
+            get => _parameters;
+            set
+            {
+                ImagesPageParameters parameters = (ImagesPageParameters)value;
+                Directory = parameters.directory;
+
+                if (!global.ImageItemCollections.ContainsKey(Directory))
+                {
+                    global.ImageItemCollections.Clear();
+                    global.ImageItemCollections.Add(Directory, ImageItems);
+
+                    model.ShowEmptyPreviews += ShowEmptyPreviews;
+                    model.GetPictures(Directory, Sorting.Name);
+                }
+                else ImageItems = global.ImageItemCollections[Directory];
+
+                _parameters = value;
+            }
+        }
+
+        private int id;
+        public int Id
+        {
+            get => id;
+            set
+            {
+                
+            }
+        }
         public string NewName { get; set; }
         public int SortParamIndex { get; set; } = -1;
         public BitmapImage PictureSource { get; set; }
         public string Directory { get; set; }
-        public double PreviewWidth { get; set; } = defaultSize;
-        public double PreviewHeight { get; set; } = defaultSize;
+        public double ThumdnailWidth { get; set; } = defaultSize;
+        public double ThumdnaiHeight { get; set; } = defaultSize;
         public double ScrollViewerHeight { get; set; }
         public double ScrollViewerWidth { get; set; }
         public double ScrollViewerVerticalOffset { get; set; }
@@ -54,6 +88,8 @@ namespace PicEditor.ViewModel
         #region Delegates
         public Action<double> LineUp;
         public Action<double> LineDown;
+        public Action CaptureMouse;
+        public Action ReleaseCapture;
         public PointHandler GetMausePosOnScrollView;
         public PointHandler GetMausePosOnPage;
         public SizeHandler GetScrollViewHeigh;
@@ -65,9 +101,9 @@ namespace PicEditor.ViewModel
         #endregion
 
         #region Поля
-        private int id;
         private MediaSearcher model = new MediaSearcher();
         private NavigationService global = NavigationService.GetInstance();
+        private ViewCreator viewCreator = ViewCreator.GetInstance();
         private Point startDragPoint;
 
         public Page page;
@@ -77,26 +113,14 @@ namespace PicEditor.ViewModel
         #region Конструкторы
         public ImagesPageVM()
         {
-            id = global.GetID();
-
             global.SelectedImageItems.Clear();
+            global.CurrentViewModel = this;
+        }
 
-            DirectoryParameters parameters = (DirectoryParameters)global.GetParameters(id);
-            Directory = parameters.Directory;
-
-            if (!global.ImageItemCollections.ContainsKey(Directory))
-            {
-                global.ImageItemCollections.Clear();
-                global.ImageItemCollections.Add(Directory, ImageItems);
-
-                model.ShowEmptyPreviews += ShowEmptyPreviews;
-                model.GetPictures(Directory, Sorting.Name);
-            }
-            else ImageItems = global.ImageItemCollections[Directory];
-
-            //global.MouseLeftButtonUp += HideRubberBand;
-
-            // MouseHook.OnMouseUp += MouseHook_OnMouseUp;
+        ~ImagesPageVM()
+        {
+            //Hook.GlobalEvents().MouseMove -= DrawRubberBand;
+            //System.Windows.MessageBox.Show("Destroed");
         }
 
         private void MouseHook_OnMouseUp(object sender, Point p)
@@ -110,11 +134,7 @@ namespace PicEditor.ViewModel
         {
             get => new DelegateCommand(() =>
             {
-                //for (int i = 0; i < 100; i++)
-                //{
-                //    ImageItems.Add(new ImageItem(""));
-                //}
-                //model.GetPictures(@"C:\Users\kserg\OneDrive\Рабочий стол\imgs\TestThink", SortingType.Name);//, () => SortBy(Sorting.Name));
+                //Hook.GlobalEvents().MouseMove += DrawRubberBand;
             });
         }
 
@@ -143,10 +163,10 @@ namespace PicEditor.ViewModel
                 var date = new DateTime(2018, 1, 1, 1, 0, 0);
                 var span = new TimeSpan(0, 5, 0);
                 model.EditDate(ImageItems.ToList(), date, span, DateType.CreationAndModification);
-                for (int i = 0; i < ImageItems.Count; i++)
-                {
-                    ImageItems[i].SetDate();
-                }
+                //for (int i = 0; i < ImageItems.Count; i++)
+                //{
+                //    ImageItems[i].SetDate();
+                //}
             });
         }
 
@@ -154,29 +174,7 @@ namespace PicEditor.ViewModel
         {
             get => new DelegateCommand(() =>
             {
-                //if (Mouse.LeftButton == MouseButtonState.Pressed && global.DraggableImage != null)
-                //{
-                //    Thread thread = new Thread(() =>
-                //    {
-                //        const double trigger = 50;
-                //        const double offset = 5;
-                //        const int sleep = 1;
-                //        Point pos = ScrollViewMousePos;
 
-                //        while (ScrollViewMousePos.Y <= trigger)
-                //        {
-                //            LineUp(offset);
-                //            Thread.Sleep(sleep);
-                //        }
-                //        while (ScrollViewMousePos.Y >= GetScrollViewHeigh() - trigger)
-                //        {
-                //            LineDown(offset);
-                //            Thread.Sleep(sleep);
-                //        }
-                //    });
-
-                //    thread.Start();
-                //}
             });
         }
 
@@ -208,13 +206,13 @@ namespace PicEditor.ViewModel
                 {
                     if (e.Delta > 0)
                     {
-                        PreviewHeight += 10;
-                        PreviewWidth += 10;
+                        ThumdnaiHeight += 10;
+                        ThumdnailWidth += 10;
                     }
                     else if (e.Delta < 0)
                     {
-                        PreviewHeight -= 10;
-                        PreviewWidth -= 10;
+                        ThumdnaiHeight -= 10;
+                        ThumdnailWidth -= 10;
                     }
                 }
                 else
@@ -234,81 +232,57 @@ namespace PicEditor.ViewModel
 
         public ICommand PageMouseMove
         {
-            get => new DelegateCommand<MouseEventArgs>((e) =>
+            get => new DelegateCommand<System.Windows.Input.MouseEventArgs>((e) =>
             {
-                if (Mouse.LeftButton == MouseButtonState.Pressed && NeedRuberBand)
-                {
-                    Point currentPos = GetMausePosOnPage();
-                    if (global.DraggableImage != null)
-                    {
-                        //DraggableMargin = new Thickness(currentPos.X - global.ImageMouseX, currentPos.Y - global.ImageMouseY, 0, 0);
-                    }
-                    else
-                    {
-                        double Right = startDragPoint.X < currentPos.X ? startDragPoint.X : currentPos.X;
-                        double Bottom = startDragPoint.Y < currentPos.Y ? startDragPoint.Y : currentPos.Y;
-
-                        RubberBandRenderTransform = new TranslateTransform(Right, Bottom);
-                        double width = Math.Abs(currentPos.X - startDragPoint.X);
-                        double height = Math.Abs(currentPos.Y - startDragPoint.Y);
-                        RubberBandWidth = width;
-                        RubberBandHeight = height;
-
-                        var viewportHeight = GetViewportHeight();
-                        var verticalOffset = GetVerticalOffset();
-
-                        double x2 = Right + width;
-                        double y2 = Bottom + height;
-
-                        Point startPoint = new Point(Right, Bottom);
-                        Point endPoint = new Point(x2, y2);
-
-                        foreach (var item in ImageItems)
-                        {
-                            Point topLeft = item.GetPositionOn(page);
-                            Point bottomRight = new Point(topLeft.X + PreviewWidth, topLeft.Y + PreviewHeight);
-
-                            LogicRectangle rectangle1 = new LogicRectangle(topLeft, bottomRight);
-                            LogicRectangle rectangle2 = new LogicRectangle(startPoint, endPoint);
-
-                            if (rectangle1.Intersects(rectangle2))
-                            {
-                                item.IsSelected = true;
-                            }
-                            else item.IsSelected = false;
-                        }
-                    }
-                }
+                DrawRubberBand(null, null);
             });
         }
 
-        private bool _IsCrossing(Point _startPoint1, Point _endPoint1, Point _startPoint2, Point _endPoint2)
+        private void DrawRubberBand(object sender, System.Windows.Forms.MouseEventArgs e)
         {
-            Point[] points = new Point[]
+            if (Mouse.LeftButton == MouseButtonState.Pressed && NeedRuberBand)
             {
-                _startPoint1,
-                new Point(_endPoint1.X, _startPoint1.Y),
-                new Point(_startPoint1.X, _endPoint1.Y),
-                _endPoint1,
-            };
-
-            bool flag = false;
-            foreach (var point in points)
-            {
-                if (IsPointInRange(_startPoint2, _endPoint2, point))
+                Point currentPos = GetMausePosOnPage();
+                if (global.DraggableImage != null)
                 {
-                    flag = true;
-                    break;
+                    //DraggableMargin = new Thickness(currentPos.X - global.ImageMouseX, currentPos.Y - global.ImageMouseY, 0, 0);
+                }
+                else
+                {
+                    double Right = startDragPoint.X < currentPos.X ? startDragPoint.X : currentPos.X;
+                    double Bottom = startDragPoint.Y < currentPos.Y ? startDragPoint.Y : currentPos.Y;
+
+                    RubberBandRenderTransform = new TranslateTransform(Right, Bottom);
+                    double width = Math.Abs(currentPos.X - startDragPoint.X);
+                    double height = Math.Abs(currentPos.Y - startDragPoint.Y);
+                    RubberBandWidth = width;
+                    RubberBandHeight = height;
+
+                    var viewportHeight = GetViewportHeight();
+                    var verticalOffset = GetVerticalOffset();
+
+                    double x2 = Right + width;
+                    double y2 = Bottom + height;
+
+                    Point startPoint = new Point(Right, Bottom);
+                    Point endPoint = new Point(x2, y2);
+
+                    foreach (var item in ImageItems)
+                    {
+                        Point topLeft = item.GetPositionOn(page);
+                        Point bottomRight = new Point(topLeft.X + ThumdnailWidth, topLeft.Y + ThumdnaiHeight);
+
+                        VirtualRectangle rectangle1 = new VirtualRectangle(topLeft, bottomRight);
+                        VirtualRectangle rectangle2 = new VirtualRectangle(startPoint, endPoint);
+
+                        if (rectangle1.Intersects(rectangle2))
+                        {
+                            item.IsSelected = true;
+                        }
+                        else item.IsSelected = false;
+                    }
                 }
             }
-            return flag;
-        }
-
-        private bool IsPointInRange(Point start, Point end, Point point)
-        {
-            if ((start.X <= point.X && start.Y <= point.Y) && (point.X <= end.X && point.Y <= end.Y))
-                return true;
-            return false;
         }
 
         public ICommand SelectAll

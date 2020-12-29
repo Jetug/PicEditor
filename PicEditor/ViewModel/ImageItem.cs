@@ -2,70 +2,37 @@
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media.Imaging;
-using System.Windows.Controls;
 using DevExpress.Mvvm;
 using PicEditor.Model;
-using System.Security.Policy;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using PicEditor.View;
 using System.Threading.Tasks;
-using System.Windows.Media;
-using System.Runtime.CompilerServices;
+using PicEditor.UserControls;
 
 namespace PicEditor.ViewModel
 {
-    class ImageItem : ViewModelBase
+    class ImageItem : ThumbnailItem
     {
-        #region Константы
-        private const int imgWidgh = 150;
-        private const int imgHeigh = 150;
-        private const int imgSize = 150;
-        #endregion
-
         #region Свойства
-        private string path = "";
-        public string Directory
+        public new double Width
         {
-            get => path;
-            set
-            {
-                path = value;
-                Name = Path.GetFileNameWithoutExtension(value);
-                Extension = Path.GetExtension(value);
-                CreationDate = File.GetCreationTime(value);
-                ModificationDate = File.GetLastWriteTime(value);
-            }
+            get => ((ImagesPageVM)global.CurrentViewModel).ThumdnailWidth;
         }
-        public string Name { get; private set; }
-        public string Extension { get; private set; }
-        public BitmapImage Preview { get; set; } = null;
-        private BitmapImage _fullImage = null;
-        public BitmapImage FullImage
+        public new double Height
         {
-            get
-            {
-                if (_fullImage == null)
-                    _fullImage = model.GetFullImage(Directory);
-                return _fullImage;
-            }
+            get => ((ImagesPageVM)global.CurrentViewModel).ThumdnailWidth;
         }
-        public DateTime CreationDate { get; set; }
-        public DateTime ModificationDate { get; set; }
-        public Point ImageMousePos { get; set; }
-        public PointHandler<Visual> GetPositionOn { get; set; }
 
-        public double Width { get; set; } = imgWidgh;
-        public double Height { get; set; } = imgHeigh;
+        public string Extension { get; private set; }
+
         private bool isSelected = false;
-        public bool IsSelected 
+        public bool IsSelected
         {
             get => isSelected;
             set
             {
                 if (isSelected != value)
                 {
-                    if(value == true) 
+                    if (value == true)
                         global.SelectedImageItems.Add(this);
                     else global.SelectedImageItems.Remove(this);
                     isSelected = value;
@@ -76,70 +43,45 @@ namespace PicEditor.ViewModel
         #endregion
 
         #region Поля
-        private MediaSearcher model = new MediaSearcher();
-        private NavigationService global = NavigationService.GetInstance();
+        private bool canBeDragged = false;
+        private bool needToShowDragging = true;
         #endregion
 
         #region Конструкторы
 
-        public ImageItem(string fullPath)
+        public ImageItem(string directory) : base(directory)
         {
-            Directory = fullPath;
-            //ShowThumbnail();
+            Extension = Path.GetExtension(directory);
+            MouseHook.OnMouseUp += (s, e) =>
+            {
+                canBeDragged = false;
+                needToShowDragging = true;
+            };
         }
         #endregion
 
         #region Публичные мотоды
-        public Image GetImage()
+
+        public override async void ShowThumbnail()
         {
-            Image image = new Image()
-            {
-                Source = Preview,
-                Height = Height,
-                Width = Width,
-            };
-            return image;
+            Preview = await Task.Factory.StartNew(() => model.GetThumbnail(Directory, imgSize));
         }
 
-        public async void ShowThumbnail()
-        {
-            //model.GetThumbnailAsync(Directory, imgSize, (bmi) => Preview = bmi);
-            
-            await Task.Factory.StartNew(() => Preview = model.GetThumbnail(Directory, imgSize));
-        }
+        //public void Fill(ImageItem it)
+        //{
+        //    Preview = it.Preview;
+        //    //FullImage = it.FullImage;
+        //    Directory = it.Directory;
+        //}
 
-        public void Fill(ImageItem it)
-        {
-            Preview = it.Preview;
-            //FullImage = it.FullImage;
-            Directory = it.Directory;
-        }
-
-        public void SetDate()
-        {
-            CreationDate = File.GetCreationTime(Directory);
-            ModificationDate = File.GetLastWriteTime(Directory);
-        }
+        //public void SetDate()
+        //{
+        //    CreationDate = File.GetCreationTime(Directory);
+        //    ModificationDate = File.GetLastWriteTime(Directory);
+        //}
         #endregion
 
         #region Команды
-        //public ICommand ImageSelected
-        //{
-        //    get => new DelegateCommand(() =>
-        //    {
-        //        //global.SelectedImageItems.Add(this);
-        //        IsSelected = true;
-        //    });
-        //}
-
-        //public ICommand ImageUnselected
-        //{
-        //    get => new DelegateCommand(() =>
-        //    {
-        //        //global.SelectedImageItems.Remove(this);
-        //        IsSelected = false;
-        //    });
-        //}
 
         public ICommand ImageMouseEnter
         {
@@ -161,6 +103,7 @@ namespace PicEditor.ViewModel
                     global.ClickedElement = this;
                     global.ImageMouseX = ImageMousePos.X;
                     global.ImageMouseY = ImageMousePos.Y;
+                    canBeDragged = true;
                 }
             });
         }
@@ -169,11 +112,7 @@ namespace PicEditor.ViewModel
         {
             get => new DelegateCommand(() =>
             {
-                if (global.ClickedElement == this)
-                {
-                    //global.OpenPictureTR(Directory);
-                }
-                else if (Keyboard.Modifiers != ModifierKeys.Control)
+                if (Keyboard.Modifiers != ModifierKeys.Control)
                 {
                     //int i = ImagesPageVM.ImageItems.IndexOf(this);
                     var path = Path.GetDirectoryName(Directory);
@@ -190,14 +129,14 @@ namespace PicEditor.ViewModel
                 }
             });
         }
-        
+
         public ICommand ThumbnailClick
         {
             get => new DelegateCommand(() =>
             {
                 if (Keyboard.Modifiers == ModifierKeys.Control)
                 {
-                    //Select();
+                    Select();
                 }
                 else
                 {
@@ -210,12 +149,15 @@ namespace PicEditor.ViewModel
         {
             get => new DelegateCommand(() =>
             {
-            if (Mouse.LeftButton == MouseButtonState.Pressed && Keyboard.Modifiers != ModifierKeys.Control && global.ClickedElement == this)
+                if (Mouse.LeftButton == MouseButtonState.Pressed && Keyboard.Modifiers != ModifierKeys.Control && canBeDragged && needToShowDragging)
                 {
+                    needToShowDragging = false;
                     global.DraggableImage = this;
                     //MouseHook.OnMouseUp += CancelDragging;
                     global.SelectedImageItems.Add(this);
-                    global.ShowPreview(Preview);
+                    global.ShowThumbnail(Preview);
+                    ViewCreator viewCreator = ViewCreator.GetInstance();
+                    viewCreator.CreateView<DraggableThumbnail>(new DraggableThumbnailParametrs(this)).Show();
                 }
             });
         }

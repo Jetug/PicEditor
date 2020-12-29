@@ -58,6 +58,7 @@ namespace PicEditor.ViewModel
         #region Поля
         private MediaSearcher model = new MediaSearcher();
         private NavigationService global = NavigationService.GetInstance();
+        private ViewCreator viewCreator = ViewCreator.GetInstance();
         private readonly FoldersPage folderPage = new FoldersPage();
         private MouseButtonState xButton1;
         #endregion
@@ -97,7 +98,7 @@ namespace PicEditor.ViewModel
                 //ImageWidth = defaultSize - imageIndent * 2;
                 //ImageHeight = defaultSize - imageIndent * 2;
 
-                global.ShowPreview = Show;
+                global.ShowThumbnail = Show;
                 global.HidePreview = Hide;
             });
         }
@@ -118,7 +119,7 @@ namespace PicEditor.ViewModel
         {
             get => new DelegateCommand(() =>
             {
-                global.ShowPreview(null);
+                global.ShowThumbnail(null);
                 //DraggableVisibility = Visibility.Visible;
             });
         }
@@ -177,7 +178,7 @@ namespace PicEditor.ViewModel
                 System.Windows.Forms.FolderBrowserDialog fbd = new System.Windows.Forms.FolderBrowserDialog();
                 if(fbd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
-                    global.ShowPage<ImagesPage>(new DirectoryParameters(fbd.SelectedPath));
+                    viewCreator.ShowPage<ImagesPage>(new ImagesPageParameters(fbd.SelectedPath));
                 }
             });
         }
@@ -186,7 +187,7 @@ namespace PicEditor.ViewModel
         {
             get => new DelegateCommand<MouseEventArgs>((e) =>
             {
-                //if(Mouse.LeftButton == MouseButtonState.Pressed)
+                if(Mouse.LeftButton == MouseButtonState.Pressed)
                 {
                     if (global.DraggableImage != null && DraggablePreview != global.DraggableImage.Preview)
                     {

@@ -1,22 +1,14 @@
 ﻿using DevExpress.Mvvm;
 using DevExpress.Mvvm.Native;
-using DevExpress.Mvvm.UI;
 using PicEditor.Model;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
-using System.Windows.Threading;
 using NaturalSort.Extension;
-using PicEditor.View;
 
 namespace PicEditor.ViewModel
 {
@@ -181,6 +173,9 @@ namespace PicEditor.ViewModel
                         //});
 
                         if (b == true) model.ScanNestedFolders(path);
+
+                        Saver saver = new Saver();
+                        saver.AddFolder(path);
                     }
                 }
             });

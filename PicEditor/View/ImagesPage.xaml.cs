@@ -52,6 +52,9 @@ namespace PicEditor.View
             vm.GetVerticalOffset = () => scrollView.VerticalOffset;
             vm.GetViewportHeight = () => scrollView.ViewportHeight;
             vm.GetItemPosition = GetPreviewControlPosition;
+
+            vm.CaptureMouse = () => scrollView.CaptureMouse();
+            vm.ReleaseCapture = scrollView.ReleaseMouseCapture;
             vm.page = page;
         }
 

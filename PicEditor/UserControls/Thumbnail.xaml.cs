@@ -20,6 +20,13 @@ namespace PicEditor.UserControls
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
+        #region Константы
+        const int lat = 30;
+        #endregion
+
+        #region Поля
+        private Point buffMousePosition;
+        #endregion
 
         public Thumbnail()
         {
@@ -140,6 +147,20 @@ namespace PicEditor.UserControls
         public static readonly DependencyProperty ClickCommandProperty =
             DependencyProperty.Register("ClickCommand", typeof(ICommand), typeof(Thumbnail), new PropertyMetadata());
 
+
+
+        public ICommand MouseMoveCommand
+        {
+            get { return (ICommand)GetValue(MouseMoveCommandProperty); }
+            set { SetValue(MouseMoveCommandProperty, value); }
+        }
+
+        public static readonly DependencyProperty MouseMoveCommandProperty =
+            DependencyProperty.Register("MouseMoveCommand", typeof(ICommand), typeof(Thumbnail), new PropertyMetadata());
+
+
+
+        #region События
         private void selection_Checked(object sender, RoutedEventArgs e)
         {
             OnSelected?.Execute(e);
@@ -172,6 +193,7 @@ namespace PicEditor.UserControls
         {
             normalBorderThickness = previewControl.BorderThickness;
             previewControl.BorderThickness = new Thickness(previewControl.BorderThickness.Left + 2);
+            buffMousePosition = Mouse.GetPosition(previewControl);
             ClickCreator.OnMouseDown(this);
         }
 
@@ -179,7 +201,7 @@ namespace PicEditor.UserControls
         {
             previewControl.BorderThickness = normalBorderThickness;
             if (ClickCreator.OnMouseUp(this))
-                ClickCommand.Execute(e);
+                ClickCommand?.Execute(e);
         }
 
         private void previewControl_MouseLeave(object sender, MouseEventArgs e)
@@ -193,10 +215,30 @@ namespace PicEditor.UserControls
             normalBorderThickness = previewControl.BorderThickness;
         }
 
-        //private void Button_Click(object sender, RoutedEventArgs e)
-        //{
-        //    previewControl.BorderThickness = normalBorderThickness;
-        //    ClickCommand?.Execute(e);
-        //}
+        private void previewControl_MouseMove(object sender, MouseEventArgs e)
+        {
+            var MousePos = Mouse.GetPosition(previewControl);
+            if (Math.Abs(buffMousePosition.X - MousePos.X) > lat || Math.Abs(buffMousePosition.Y - MousePos.Y) > lat)
+            {
+                MouseMoveCommand?.Execute(e);
+            }
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            //previewControl.BorderThickness = normalBorderThickness;
+            ClickCommand?.Execute(e);
+        }
+        #endregion
+
+        private void button_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+
+        }
+
+        private void button_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+
+        }
     }
 }

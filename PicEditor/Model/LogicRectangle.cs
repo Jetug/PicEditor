@@ -7,14 +7,14 @@ using System.Windows;
 
 namespace PicEditor.Model
 {
-    class LogicRectangle
+    class VirtualRectangle
     {
         public double Left;
         public double Top;
         public double Right;
         public double Bottom;
 
-        public LogicRectangle(Point TopLeft, Point BottomRight)
+        public VirtualRectangle(Point TopLeft, Point BottomRight)
         {
             Left = TopLeft.X;
             Top = TopLeft.Y;
@@ -22,12 +22,12 @@ namespace PicEditor.Model
             Bottom = BottomRight.Y;
         }
 
-        public bool Intersects(LogicRectangle rect)
+        public bool Intersects(VirtualRectangle rect)
         {
             return Intersects(this, rect);
         }
 
-        public static bool Intersects(LogicRectangle r1, LogicRectangle r2)
+        public static bool Intersects(VirtualRectangle r1, VirtualRectangle r2)
         {
             return
             (

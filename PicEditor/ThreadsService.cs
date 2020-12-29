@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace PicEditor
 {
@@ -34,7 +35,15 @@ namespace PicEditor
             {
                 threads.Add(thread);
                 start();
-                threads.Remove(thread);
+                try
+                {
+                    threads.Remove(thread);
+                }
+                catch(ArgumentOutOfRangeException e)
+                {
+                    MessageBox.Show(e.Message);
+                }
+
             });
             thread.Start();
 

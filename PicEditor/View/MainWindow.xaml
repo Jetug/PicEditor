@@ -11,6 +11,7 @@
         xmlns:b="clr-namespace:PicEditor.Behaviours"
         xmlns:vm="clr-namespace:PicEditor.ViewModel"
         xmlns:pic="clr-namespace:PicControls;assembly=PicControls"
+        xmlns:pic1="clr-namespace:PicEditor.UserControls"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
         Style="{DynamicResource WindowStyle}"
@@ -33,11 +34,6 @@
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="MouseMove">
             <j:EventToCommand Command="{Binding WindowMouseMove}"
-                              PassEventArgsToCommand="True" />
-        </i:EventTrigger>
-
-        <i:EventTrigger EventName="SizeChanged">
-            <j:EventToCommand Command="{Binding SizeChanged}"
                               PassEventArgsToCommand="True" />
         </i:EventTrigger>
 
@@ -166,16 +162,16 @@
                 Foreground="#FFA5D4D6"
                 BorderBrush="{DynamicResource BorderBrush}" />
 
-        <pic:ThumbnailControl ImageSource="{Binding DraggablePreview}"
-                              Visibility="{Binding DraggableVisibility}"
-                              ImageName="{Binding DraggableName}"
-                              Height="150"
-                              Width="150"
-                              HorizontalAlignment="Left"
-                              VerticalAlignment="Top"
-                              Margin="{Binding DraggableMargin}"
-                              IsHitTestVisible="False"
-                              Grid.ColumnSpan="2" />
+        <pic1:Thumbnail ImageSource="{Binding DraggablePreview}"
+                        Visibility="{Binding DraggableVisibility}"
+                        ImageName="{Binding DraggableName}"
+                        Height="150"
+                        Width="150"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Margin="{Binding DraggableMargin}"
+                        IsHitTestVisible="False"
+                        Grid.ColumnSpan="2" />
 
         <pic:PictureControl Name="pic"
                             BackgroundOpacity="0.9"

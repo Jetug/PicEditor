@@ -54,8 +54,8 @@ namespace PicEditor.Model
         #endregion
 
         #region Поля
-        private List<String> whiteList = new List<string>();
-        private List<String> blackList = new List<string>();
+        private List<string> whiteList = new List<string>();
+        private List<string> blackList = new List<string>();
         #endregion
 
         #region Конструкторы
@@ -145,7 +145,7 @@ namespace PicEditor.Model
                         string line;
                         while ((line = sr.ReadLine()) != null)
                         {
-                            if(Directory.Exists(line))
+                            if (Directory.Exists(line))
                             {
                                 //ScanFolder(line);
                                 ScanNestedFolders(line);
@@ -294,9 +294,9 @@ namespace PicEditor.Model
                 image.EndInit();
                 image.Freeze();
                 Application.Current.Dispatcher.Invoke(() =>
-               {
+                {
                    ShowImage(image);
-               });
+                });
             });
             thread.Start();
         }
