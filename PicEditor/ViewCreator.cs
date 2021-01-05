@@ -32,7 +32,6 @@ namespace PicEditor
         #region Публичные методы
         public T CreateView<T>(IParameters parameters) where T : FrameworkElement, new()
         {
-            //ConstructorParameters.Add(id + 1, parameters);
             T view = new T();
             ((INavigable)view.DataContext).Parameters = parameters;
             return view;

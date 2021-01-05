@@ -18,7 +18,8 @@
         Topmost="True"
         WindowStartupLocation="Manual"
         WindowStyle="None"
-        Content="{Binding Content}">
+        Content="{Binding Content}"
+        Name="window">
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
             <i:InvokeCommandAction Command="{Binding WindowLoaded}" />

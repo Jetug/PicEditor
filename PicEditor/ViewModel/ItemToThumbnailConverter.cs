@@ -17,6 +17,7 @@ namespace PicEditor.ViewModel
                 Width = imageItem.Width,
                 ImageName = imageItem.Name,
                 ImageSource = imageItem.Preview,
+                IsHitTestVisible = false,
             };
             return thumbnail;
         }

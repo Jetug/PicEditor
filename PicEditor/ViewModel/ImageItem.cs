@@ -152,10 +152,10 @@ namespace PicEditor.ViewModel
                 if (Mouse.LeftButton == MouseButtonState.Pressed && Keyboard.Modifiers != ModifierKeys.Control && canBeDragged && needToShowDragging)
                 {
                     needToShowDragging = false;
-                    global.DraggableImage = this;
+                    //global.DraggableImage = this;
                     //MouseHook.OnMouseUp += CancelDragging;
                     global.SelectedImageItems.Add(this);
-                    global.ShowThumbnail(Preview);
+                    //global.ShowThumbnail(Preview);
                     ViewCreator viewCreator = ViewCreator.GetInstance();
                     viewCreator.CreateView<DraggableThumbnail>(new DraggableThumbnailParametrs(this)).Show();
                 }

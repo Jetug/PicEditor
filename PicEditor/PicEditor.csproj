@@ -184,6 +184,7 @@
     <Compile Include="View\RenamingWindow.xaml.cs">
       <DependentUpon>RenamingWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="WinAPI.cs" />
     <Page Include="Colors\Colors.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

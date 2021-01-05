@@ -15,7 +15,7 @@
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
         Style="{DynamicResource WindowStyle}"
-        Title="MainWindow"
+        Title="PicEditor"
         Width="630"
         Height="690"
         MinWidth="680"
@@ -65,23 +65,6 @@
             <ColumnDefinition Width="110" />
             <ColumnDefinition Width="119*" />
         </Grid.ColumnDefinitions>
-        <Button Command="{Binding Ok}"
-                Content="Button"
-                HorizontalAlignment="Left"
-                Margin="10,55,0,0"
-                VerticalAlignment="Top"
-                Width="95"
-                Height="45"
-                Style="{DynamicResource ButtonStyle}" />
-
-        <Button Command="{Binding NotOk}"
-                Style="{DynamicResource ButtonStyle}"
-                Content="Button"
-                HorizontalAlignment="Left"
-                Margin="10,125,0,0"
-                VerticalAlignment="Top"
-                Width="95"
-                Height="35" />
 
         <Frame Name="frame"
                Content="{Binding FramePage}"
@@ -161,17 +144,6 @@
                 Background="#FF363636"
                 Foreground="#FFA5D4D6"
                 BorderBrush="{DynamicResource BorderBrush}" />
-
-        <pic1:Thumbnail ImageSource="{Binding DraggablePreview}"
-                        Visibility="{Binding DraggableVisibility}"
-                        ImageName="{Binding DraggableName}"
-                        Height="150"
-                        Width="150"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Top"
-                        Margin="{Binding DraggableMargin}"
-                        IsHitTestVisible="False"
-                        Grid.ColumnSpan="2" />
 
         <pic:PictureControl Name="pic"
                             BackgroundOpacity="0.9"

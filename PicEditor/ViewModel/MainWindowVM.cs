@@ -83,7 +83,6 @@ namespace PicEditor.ViewModel
                 PictureSource = null;
                 model.GetFullImageTR(pic, (img) => PictureSource = img);
             };
-
         }
         #endregion
 
@@ -94,12 +93,6 @@ namespace PicEditor.ViewModel
             {
                 FramePage = folderPage;
                 global.HomePage = folderPage;
-
-                //ImageWidth = defaultSize - imageIndent * 2;
-                //ImageHeight = defaultSize - imageIndent * 2;
-
-                global.ShowThumbnail = Show;
-                global.HidePreview = Hide;
             });
         }
 
@@ -113,24 +106,6 @@ namespace PicEditor.ViewModel
         {
             DraggableVisibility = Visibility.Hidden;
             DraggablePreview = null;
-        }
-
-        public ICommand Ok
-        {
-            get => new DelegateCommand(() =>
-            {
-                global.ShowThumbnail(null);
-                //DraggableVisibility = Visibility.Visible;
-            });
-        }
-
-        public ICommand NotOk
-        {
-            get => new DelegateCommand(() =>
-            {
-                global.HidePreview();
-                //DraggableVisibility = Visibility.Hidden;
-            });
         }
 
         public ICommand WindowMouseDown

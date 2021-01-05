@@ -63,13 +63,13 @@
                 <TextBlock Text="По дате созданя" />
                 <TextBlock Text="По дате изменения" />
             </ComboBox>
-            <TextBox Text="{Binding NewName}"
+            <!--<TextBox Text="{Binding NewName}"
                      HorizontalAlignment="Right"
                      VerticalAlignment="Top"
                      Height="24"
                      Width="78"
                      Margin="0,14,177,0"
-                     TextWrapping="NoWrap" />
+                     TextWrapping="NoWrap"/>
 
             <Button Content="Rename"
                     Command="{Binding RenameAll}"
@@ -78,7 +78,7 @@
                     Margin="0,11,85,0"
                     Width="75"
                     Height="29"
-                    Style="{DynamicResource ButtonStyle}" />
+                    Style="{DynamicResource ButtonStyle}" />-->
 
             <Menu  Name="menu"
                    Background="{DynamicResource MainColorBrush}"
@@ -156,7 +156,7 @@
                     Height="27" />
         </Grid>
 
-        
+
         <ScrollViewer x:Name="scrollView"
                       Margin="0,55,0,0"
                       MouseMove="scrollView_MouseMove"
@@ -190,7 +190,7 @@
             <Grid>
                 <Grid Background="{DynamicResource BackgroundBrush}"
                       MouseLeftButtonDown="Grid_MouseLeftButtonDown">
-                    
+
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="MouseLeftButtonDown">
                             <i:InvokeCommandAction Command="{Binding PageLeftButtonDown}" />
@@ -198,7 +198,7 @@
                     </i:Interaction.Triggers>
 
                 </Grid>
-                
+
                 <ItemsControl Name="itemsControl"
                               ItemsSource="{Binding ImageItems, Mode=OneWay}"
                               Height="auto"
@@ -269,164 +269,9 @@
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
-                
+
             </Grid>
         </ScrollViewer>
-
-        <!--<ScrollViewer HorizontalAlignment="Left"
-                      Height="310"
-                      Margin="10,80,0,0"
-                      VerticalAlignment="Top"
-                      Width="195">
-            <Grid Background="DarkKhaki"
-                  MouseLeftButtonDown="Grid_MouseLeftButtonDown">
-                <Grid Background="Cyan"
-                      MouseLeftButtonDown="Grid_MouseLeftButtonDown_1">
-
-                </Grid>
-                <ItemsControl Name="itemsControl2"
-                              ItemsSource="{Binding ImageItems, Mode=OneWay}"
-                              Height="auto"
-                              Width="auto">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <WrapPanel Name="wrapPanel"
-                                       AllowDrop="True"
-                                       Height="auto"
-                                       Width="auto"
-                                       MouseDown="wrapPanel_MouseDown"
-                                       MouseEnter="wrapPanel_MouseEnter"
-                                       Margin="4,4,0,0">
-
-                            </WrapPanel>
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <uc:Thumbnail Width="{Binding DataContext.PreviewWidth, 
-                                                RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"
-                                          Height="{Binding DataContext.PreviewHeight,
-                                                RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"
-                                          Margin="1,1,1,1"
-                                          ImageSource="{Binding Preview}"
-                                          SelectionVisibility="Visible"
-                                          ImageName="{Binding Name}"
-                                          IsSelected="{Binding IsSelected}"
-                                          OnSelected="{Binding ImageSelected}"
-                                          OnUnselected="{Binding ImageUnselected}"
-                                          ClickCommand="{Binding ThumbnailClick}"
-                                          BorderThickness="10"
-                                          BorderBrush="Transparent">
-                                <i:Interaction.Behaviors>
-                                    <b:MVVMBehaviour MousePos="{Binding ImageMousePos, Mode=OneWayToSource}"
-                                                     GetPositionOn="{Binding GetPositionOn, Mode=OneWayToSource}" />
-                                </i:Interaction.Behaviors>
-                                <i:Interaction.Triggers>
-
-                                    <i:EventTrigger EventName="PreviewMouseLeftButtonDown">
-                                        <i:InvokeCommandAction Command="{Binding ImageLeftButtonDown}" />
-                                    </i:EventTrigger>
-
-                                    <i:EventTrigger EventName="MouseLeftButtonUp">
-                                        <i:InvokeCommandAction Command="{Binding ImageLeftButtonUp}" />
-                                    </i:EventTrigger>
-
-                                    <i:EventTrigger EventName="MouseEnter">
-                                        <i:InvokeCommandAction Command="{Binding ImageMouseEnter}" />
-                                    </i:EventTrigger>
-
-                                    <i:EventTrigger EventName="MouseMove">
-                                        <i:InvokeCommandAction Command="{Binding ImageMouseMove}" />
-                                    </i:EventTrigger>
-
-                                </i:Interaction.Triggers>
-                                <UserControl.ContextMenu>
-                                    <ContextMenu Background="#FF4F4F4F"
-                                                 Style="{DynamicResource ContextMenuStyle}">
-                                        <MenuItem Header="Переименовать"
-                                                  Command="{Binding RenameImage}" />
-                                        <MenuItem Header="Удалить"
-                                                  Command="{Binding RemoveImage}" />
-                                    </ContextMenu>
-                                </UserControl.ContextMenu>
-                            </uc:Thumbnail>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                    <i:Interaction.Triggers>
-
-                        <i:EventTrigger EventName="MouseLeftButtonDown">
-                            <i:InvokeCommandAction Command="{Binding PageLeftButtonDown}" />
-                        </i:EventTrigger>
-
-                    </i:Interaction.Triggers>
-                </ItemsControl>
-                <WrapPanel>
-                    <Label Height="100"
-                           Width="70"
-                           Margin="5,5,5,5"
-                           Background="CornflowerBlue"
-                           PreviewMouseLeftButtonDown="Label_MouseLeftButtonDown"
-                           MouseMove="label_MouseMove" />
-                    <Label Height="100"
-                           Width="70"
-                           Margin="5,5,5,5"
-                           Background="CornflowerBlue"
-                           PreviewMouseLeftButtonDown="Label_MouseLeftButtonDown"
-                           MouseMove="label_MouseMove" />
-
-                    <Label Height="100"
-                           Width="70"
-                           Margin="5,5,5,5"
-                           Background="CornflowerBlue"
-                           PreviewMouseLeftButtonDown="Label_MouseLeftButtonDown"
-                           MouseMove="label_MouseMove" />
-                    <Label Height="100"
-                           Width="70"
-                           Margin="5,5,5,5"
-                           Background="CornflowerBlue"
-                           PreviewMouseLeftButtonDown="Label_MouseLeftButtonDown"
-                           MouseMove="label_MouseMove" />
-                    <Label Height="100"
-                           Width="70"
-                           Margin="5,5,5,5"
-                           Background="CornflowerBlue"
-                           PreviewMouseLeftButtonDown="Label_MouseLeftButtonDown"
-                           MouseMove="label_MouseMove" />
-                    <Label Height="100"
-                           Width="70"
-                           Margin="5,5,5,5"
-                           Background="CornflowerBlue"
-                           PreviewMouseLeftButtonDown="Label_MouseLeftButtonDown"
-                           MouseMove="label_MouseMove" />
-                    <Label Height="100"
-                           Width="70"
-                           Margin="5,5,5,5"
-                           Background="CornflowerBlue"
-                           PreviewMouseLeftButtonDown="Label_MouseLeftButtonDown"
-                           MouseMove="label_MouseMove" />
-                    <Label Height="100"
-                           Width="70"
-                           Margin="5,5,5,5"
-                           Background="CornflowerBlue"
-                           PreviewMouseLeftButtonDown="Label_MouseLeftButtonDown"
-                           MouseMove="label_MouseMove" />
-                </WrapPanel>
-            </Grid>
-        </ScrollViewer>-->
-        
-        <!--<Label Content="{Binding RubberBandWidth}"
-               HorizontalAlignment="Left"
-               VerticalAlignment="Top"
-               Margin="20,580,0,0"
-               Height="30"
-               Width="35" />
-        
-        <Label Content="{Binding RubberBandHeight}"
-               HorizontalAlignment="Left"
-               VerticalAlignment="Top"
-               Margin="60,580,0,0"
-               Height="30"
-               Width="35" />-->
 
         <Rectangle Margin="{Binding RubberBandMargin}"
                    Height="{Binding RubberBandHeight}"

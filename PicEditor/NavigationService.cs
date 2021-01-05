@@ -30,10 +30,6 @@ namespace PicEditor
         #endregion
 
         #region Делегаты
-        public delegate Point PointHandler();
-
-        public Action<BitmapImage> ShowThumbnail { get; set; }
-        public Action HidePreview { get; set; }
         public Action<BitmapImage> OpenPicture;
         public Action<string> OpenPictureTR;
         public Predicate<Page> Navigate;

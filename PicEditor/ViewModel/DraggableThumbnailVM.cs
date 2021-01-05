@@ -1,19 +1,15 @@
 ﻿using System;
-using System.IO;
 using System.Windows;
-using System.Windows.Input;
 using DevExpress.Mvvm;
-using PicEditor.Model;
-using PicEditor.View;
-using System.Threading.Tasks;
-using PicEditor.UserControls;
-using Gma.System.MouseKeyHook;
 
 namespace PicEditor.ViewModel
 {
     class DraggableThumbnailVM : ViewModelBase, INavigable
     {
         public Action CloseWindow;
+        public PointHandler<Point> PointToScreen;
+        public Action<double> SetWindowLeft;
+        public Action<double> SetWindowTop;
 
         private IParameters _parameters;
         public IParameters Parameters
@@ -25,20 +21,35 @@ namespace PicEditor.ViewModel
                 ImageItem imageItem = parametrs.imageItem;
                 Content = ItemToThumbnailConverter.Convert(imageItem);
                 _parameters = value;
+                MouseHook.OnMouseUp += StopDragging;
+                MouseHook.OnMouseMove += MoveWindow;
             }
         }
 
         public object Content { get; set; }
-         
+
         public DraggableThumbnailVM()
         {
-            MouseHook.OnMouseUp += StopDragging;
         }
 
         public void StopDragging(object sender, Point p)
         {
             CloseWindow();
+            MouseHook.OnMouseMove -= MoveWindow;
             MouseHook.OnMouseUp -= StopDragging;
+        }
+
+        public void MoveWindow1(object sender, System.Windows.Forms.MouseEventArgs e)
+        {
+            PointToScreen(new Point(e.X,e.Y));
+        }
+
+        int i = 100;
+
+        public void MoveWindow(object sender, Point point)
+        {
+            SetWindowLeft(point.X-30);
+            SetWindowTop(point.Y-30);
         }
     }
 }

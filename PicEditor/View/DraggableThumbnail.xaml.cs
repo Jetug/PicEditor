@@ -1,17 +1,7 @@
 ﻿using PicEditor.ViewModel;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace PicEditor.View
 {
@@ -25,6 +15,15 @@ namespace PicEditor.View
             InitializeComponent();
             DraggableThumbnailVM vm = (DataContext as DraggableThumbnailVM);
             vm.CloseWindow = Close;
+            vm.PointToScreen = window.PointToScreen;
+            vm.SetWindowLeft = (pos) => { window.Left = pos; };
+            vm.SetWindowTop = (pos) => { window.Top = pos; };
+        }
+
+        protected override void OnSourceInitialized(EventArgs e)
+        {
+            base.OnSourceInitialized(e);
+            WinAPI.MakeWindowTransparent(this);
         }
     }
 }
