@@ -7,7 +7,6 @@ namespace PicEditor.ViewModel
     class DraggableThumbnailVM : ViewModelBase, INavigable
     {
         public Action CloseWindow;
-        public PointHandler<Point> PointToScreen;
         public Action<double> SetWindowLeft;
         public Action<double> SetWindowTop;
 
@@ -38,13 +37,6 @@ namespace PicEditor.ViewModel
             MouseHook.OnMouseMove -= MoveWindow;
             MouseHook.OnMouseUp -= StopDragging;
         }
-
-        public void MoveWindow1(object sender, System.Windows.Forms.MouseEventArgs e)
-        {
-            PointToScreen(new Point(e.X,e.Y));
-        }
-
-        int i = 100;
 
         public void MoveWindow(object sender, Point point)
         {

@@ -7,6 +7,7 @@ using PicEditor.Model;
 using PicEditor.View;
 using System.Threading.Tasks;
 using PicEditor.UserControls;
+using System.Threading;
 
 namespace PicEditor.ViewModel
 {
@@ -105,6 +106,10 @@ namespace PicEditor.ViewModel
                     global.ImageMouseY = ImageMousePos.Y;
                     canBeDragged = true;
                 }
+                else
+                {
+                    ((ImagesPageVM)global.CurrentViewModel).StartRubberBanding();
+                }
             });
         }
 
@@ -157,7 +162,20 @@ namespace PicEditor.ViewModel
                     global.SelectedImageItems.Add(this);
                     //global.ShowThumbnail(Preview);
                     ViewCreator viewCreator = ViewCreator.GetInstance();
-                    viewCreator.CreateView<DraggableThumbnail>(new DraggableThumbnailParametrs(this)).Show();
+
+                    DraggableThumbnail dt = viewCreator.CreateView<DraggableThumbnail>(new DraggableThumbnailParametrs(this));
+                    dt.Show();
+
+                    //Thread t = new Thread(() =>
+                    //{
+                    //    DraggableThumbnail dt = viewCreator.CreateView<DraggableThumbnail>(new DraggableThumbnailParametrs(this));
+                    //    dt.Show();
+                    //    System.Windows.Threading.Dispatcher.Run();
+                    //});
+                    //t.TrySetApartmentState(ApartmentState.STA);
+                    //t.IsBackground = true;
+                    //t.Start();
+
                 }
             });
         }

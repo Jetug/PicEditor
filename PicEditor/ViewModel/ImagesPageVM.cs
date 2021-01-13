@@ -51,15 +51,6 @@ namespace PicEditor.ViewModel
             }
         }
 
-        private int id;
-        public int Id
-        {
-            get => id;
-            set
-            {
-                
-            }
-        }
         public string NewName { get; set; }
         public int SortParamIndex { get; set; } = -1;
         public BitmapImage PictureSource { get; set; }
@@ -182,11 +173,11 @@ namespace PicEditor.ViewModel
         {
             get => new DelegateCommand(() =>
             {
-                NeedRuberBand = true;
-                startDragPoint = GetMausePosOnPage();
-                PageCaptureMouse();
+                StartRubberBanding();
             });
         }
+
+        
 
         public ICommand PageMouseUp
         {
@@ -324,6 +315,15 @@ namespace PicEditor.ViewModel
                         break;
                 }
             });
+        }
+        #endregion
+
+        #region Публичные методы
+        public void StartRubberBanding()
+        {
+            NeedRuberBand = true;
+            startDragPoint = GetMausePosOnPage();
+            PageCaptureMouse();
         }
         #endregion
 

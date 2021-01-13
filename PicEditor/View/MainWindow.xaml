@@ -16,9 +16,9 @@
         WindowStartupLocation="CenterScreen"
         Style="{DynamicResource WindowStyle}"
         Title="PicEditor"
-        Width="630"
+        Width="600"
         Height="690"
-        MinWidth="680"
+        MinWidth="600"
         MinHeight="690"
         Name="window">
     <!--#region ds-->
@@ -62,8 +62,8 @@
 
     <Grid Background="{DynamicResource BackgroundBrush}">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="110" />
-            <ColumnDefinition Width="119*" />
+            <ColumnDefinition Width="40" />
+            <ColumnDefinition />
         </Grid.ColumnDefinitions>
 
         <Frame Name="frame"
@@ -94,56 +94,19 @@
                     Style="{DynamicResource ButtonStyle}" />
         </Grid>-->
         <!--#endregion-->
-        <Button Content="Открыть &#xD;&#xA;  папку"
-                Command="{Binding OpenFolder}"
+        <Button Command="{Binding OpenFolder}"
                 HorizontalAlignment="Left"
-                Margin="10,275,0,0"
+                Margin="3,10,0,0"
                 VerticalAlignment="Top"
-                Width="95"
-                Height="51"
+                Width="35"
+                Height="35"
                 HorizontalContentAlignment="Center"
                 VerticalContentAlignment="Center"
-                Style="{DynamicResource ButtonStyle}">
+                Style="{DynamicResource ButtonStyle}"
+                Padding="0,0,0,3">
+            <Path Data="M19,20H4C2.89,20 2,19.1 2,18V6C2,4.89 2.89,4 4,4H10L12,6H19A2,2 0 0,1 21,8H21L4,8V18L6.14,10H23.21L20.93,18.5C20.7,19.37 19.92,20 19,20Z"
+                  Fill="{DynamicResource ForegroundBrush}" />
         </Button>
-
-        <Grid HorizontalAlignment="Left"
-              Height="214"
-              Margin="0,441,0,0"
-              VerticalAlignment="Top"
-              Width="115">
-            <TextBlock x:Name="tb"
-                       HorizontalAlignment="Left"
-                       Margin="10,0,0,0"
-                       TextWrapping="Wrap"
-                       Text=""
-                       VerticalAlignment="Top"
-                       Height="35"
-                       Width="65" />
-            <TextBlock HorizontalAlignment="Left"
-                       Margin="5,40,0,0"
-                       TextWrapping="Wrap"
-                       Text="{Binding ImageMouseX}"
-                       VerticalAlignment="Top"
-                       Height="29"
-                       Width="39" />
-            <TextBlock HorizontalAlignment="Left"
-                       Margin="49,40,0,0"
-                       TextWrapping="Wrap"
-                       Text="{Binding ImageMouseY}"
-                       VerticalAlignment="Top"
-                       Height="29"
-                       Width="41" />
-        </Grid>
-
-        <Button Content="Button"
-                HorizontalAlignment="Left"
-                Margin="10,365,0,0"
-                VerticalAlignment="Top"
-                Width="95"
-                Height="45"
-                Background="#FF363636"
-                Foreground="#FFA5D4D6"
-                BorderBrush="{DynamicResource BorderBrush}" />
 
         <pic:PictureControl Name="pic"
                             BackgroundOpacity="0.9"

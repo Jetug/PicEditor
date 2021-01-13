@@ -146,12 +146,14 @@
     <Compile Include="Model\Saver.cs" />
     <Compile Include="Model\WindowResizer.cs" />
     <Compile Include="MouseHook.cs" />
+    <Compile Include="NewWindowsThread.cs" />
     <Compile Include="Styles\WindowStyle.xaml.cs">
       <DependentUpon>WindowStyle.xaml</DependentUpon>
     </Compile>
     <Compile Include="ThreadsService.cs" />
     <Compile Include="NavigationService.cs" />
     <Compile Include="Model\MediaSearcher.cs" />
+    <Compile Include="UserControls\AlignableWrapPanel.cs" />
     <Compile Include="UserControls\Thumbnail.xaml.cs">
       <DependentUpon>Thumbnail.xaml</DependentUpon>
     </Compile>

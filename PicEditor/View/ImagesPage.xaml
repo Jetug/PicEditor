@@ -15,9 +15,8 @@
       d:DesignHeight="630"
       d:DesignWidth="500"
       Name="page"
-      Loaded="MainWin_Loaded"
-      Background="{DynamicResource BackgroundBrush}"
-      MouseWheel="page_MouseWheel">
+      Loaded="Page_Loaded"
+      Background="{DynamicResource BackgroundBrush}">
     <Page.DataContext>
         <vm:ImagesPageVM />
     </Page.DataContext>
@@ -188,8 +187,7 @@
 
             </i:Interaction.Triggers>
             <Grid>
-                <Grid Background="{DynamicResource BackgroundBrush}"
-                      MouseLeftButtonDown="Grid_MouseLeftButtonDown">
+                <Grid Background="{DynamicResource BackgroundBrush}">
 
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="MouseLeftButtonDown">
@@ -202,18 +200,19 @@
                 <ItemsControl Name="itemsControl"
                               ItemsSource="{Binding ImageItems, Mode=OneWay}"
                               Height="auto"
-                              Width="auto">
+                              Width="auto"
+                              Margin="-1,0,1,0">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <WrapPanel Name="wrapPanel"
+                            <uc:AlignableWrapPanel 
+                                       x:Name="wrapPanel"
                                        AllowDrop="True"
                                        Height="auto"
                                        Width="auto"
-                                       MouseDown="wrapPanel_MouseDown"
-                                       MouseEnter="wrapPanel_MouseEnter"
-                                       Margin="4,4,0,0">
+                                       Margin="4,4,0,0"
+                                       HorizontalContentAlignment="Stretch">
 
-                            </WrapPanel>
+                            </uc:AlignableWrapPanel>
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>

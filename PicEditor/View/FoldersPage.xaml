@@ -97,13 +97,17 @@
 
             </i:Interaction.Triggers>
             <ItemsControl ItemsSource="{Binding FolderItems}"
-                          HorizontalAlignment="Left"
-                          VerticalAlignment="Top"
                           Height="auto"
                           Width="auto">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <WrapPanel />
+                        <uc:AlignableWrapPanel x:Name="wrapPanel"
+                                               AllowDrop="True"
+                                               Height="auto"
+                                               Width="auto"
+                                               Margin="4,4,0,0"
+                                               HorizontalContentAlignment="Stretch">
+                        </uc:AlignableWrapPanel>
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
@@ -112,7 +116,7 @@
                                                 RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"
                                       Height="{Binding DataContext.PreviewHeight,
                                                 RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"
-                                      Margin="0,0,1,1"
+                                      Margin="1,1,1,1"
                                       ImageSource="{Binding Preview}"
                                       SelectionVisibility="Visible"
                                       ImageName="{Binding Name}"

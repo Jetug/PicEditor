@@ -116,6 +116,11 @@
                                     <ContentPresenter Content="{TemplateBinding Content}" />
                                 </Border>
 
+                                <Border Grid.Row="2"
+                                        BorderThickness="5,0,5,5"
+                                        BorderBrush="{DynamicResource WondowBorderBrush}">
+                                </Border>
+
                             </Grid>
 
                         </Grid>

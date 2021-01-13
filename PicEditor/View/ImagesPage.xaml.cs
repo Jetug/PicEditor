@@ -28,7 +28,7 @@ namespace PicEditor.View
             InitializeComponent();
         }
 
-        private void MainWin_Loaded(object sender, RoutedEventArgs e)
+        private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             ImagesPageVM vm = (DataContext as ImagesPageVM);
 
@@ -87,42 +87,6 @@ namespace PicEditor.View
         {
             var pos = Mouse.GetPosition(scrollView);
             //tb.Text = pos.ToString();
-        }
-
-        private void wrapPanel_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-
-        }
-
-        private void wrapPanel_MouseEnter(object sender, MouseEventArgs e)
-        {
-
-        }
-
-        private void Grid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-
-        }
-
-        private void Grid_MouseLeftButtonDown_1(object sender, MouseButtonEventArgs e)
-        {
-
-        }
-
-        private void Label_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-
-        }
-
-
-        private void label_MouseMove(object sender, MouseEventArgs e)
-        {
-
-        }
-
-        private void page_MouseWheel(object sender, MouseWheelEventArgs e)
-        {
-
         }
     }
 }
